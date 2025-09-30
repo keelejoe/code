@@ -1,0 +1,169 @@
+---
+title: "Untitled"
+output: html_document
+date: "2025-09-18"
+---
+#starting r, this 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+#this is where you code
+#notes
+#first time using a package, must download
+install.packages("tidyverse")
+install.packages("summarytools")
+install.packages("survey")
+
+```
+* bullet points
+* 
+# headings 
+## smaller heading
+```{r}
+
+#load packages each session
+library(tidyverse)
+library(summarytools)
+library(survey)
+
+```
+
+```{r}
+
+#keep link to data handy
+ load("NSDUH_2023.Rdata")
+ 
+```
+ 
+```{r}
+
+ #renaming data, or creating extra copy 
+ d <-og dataset
+ 
+```
+
+```{r}
+ #basic functions to learn data
+ #view all variables
+ glimpse(d)
+ 
+ vars <-as.tibble(colnames(d))
+ 
+```
+
+ 
+```{r}
+ #create new dataset with just var of interest, called a pipe
+ #case sensitive when selecting vars
+ s <- data %>%
+   select(c(AGE3, HEALTH, SEXIDENT22, SPEAKENGL, IRSEX, NEWRACE2))
+ 
+```
+
+```{r}
+ #frequency table
+ #dataframe$variable
+ freq(s$AGE3)
+ 
+```
+
+```{r}
+ #edit s and save in same dataframe
+ #when new var 1 = but specify values within vars then ==
+ #or represented by |
+ 
+ s <- s %>% 
+   mutate(
+     ageclean = case_when(
+       AGE3 == 1 ~ "12-13",
+       AGE3 == 2 ~ "14-15",
+       AGE3 == 3 | AGE3 == 4 ~"16-20"))
+ 
+freq(s$ageclean)
+ 
+```
+
+```{r}
+ 
+#ifelse command to state one condition
+
+s <- s %>%
+  mutate(
+    age1820 = ifelse(AGE3==4, 1, 0))
+ 
+addmargins(table(s$AGE3, s$age1820, useNA = "ifany"))
+
+glimpse(s)
+
+```
+
+```{r}
+
+#stats functions
+
+mean(data$AGE3, na.rm=true)
+
+```
+
+
+#survey weights
+#only change the data line
+#and then run
+
+#stats with survery weight/design applied, consider in stats dev/output
+#change stat commmands that allow for weights to be used
+
+```{r}
+
+#unweighted count
+freq(d$IRSEX)
+
+```
+
+```{r}
+
+#weighted participant count
+weighted_counts <- svytable(~IRSEX, svy_design)
+weighted_counts
+
+```
+
+
+#weighted and unweighted counts in table 1 describing sample
+#always use weighted counts for stats
+
+```{r}
+
+#weighted proportions
+weighted_proportions <- prop.table(weighted_counts)
+weighted_proportions
+
+```
+
+
+
+
+
+
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

@@ -1,0 +1,65 @@
+---
+title: "mycodebookpractice"
+output: html_document
+date: "2025-09-30"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, load packages}
+library(tidyverse)
+library(summarytools)
+library(survey)
+```
+
+```{r, load data}
+load("~/code/NSDUH_2023.Rdata")
+library(readr)
+```
+
+```{r, renaming}
+ d <-"~/code/NSDUH_2023.Rdata"
+
+ vars <-as_tibble(colnames(d))
+```
+
+```{r, new data with vars of interest}
+ s <- data %>%
+   select(c(QUESTID2, AGE3, CATAG3, HEALTH, IRSEX, CIGTRY, NICVAPAGE, SMKLSSTRY, CIGARTRY, PIPEVER, ALCTRY, MJAGE, COCAGE, HERAGE, METHAMAGE))
+```
+
+```{r, freq}
+ freq(s$CIGTRY)
+```
+```{r, mean}
+mean(s$CIGTRY)
+```
+```{r, median}
+median(s$CIGTRY)
+```
+
+```{r, cigtry-safe-recode}
+# Safely coerce CIGTRY to numeric and keep only ages 1..65, then compute median and show counts
+library(dplyr)
+
+# prefer `s` if it exists (your analytic subset), otherwise use `d`
+df_for_cig <- if (exists('s')) s else d
+
+df_for_cig <- df_for_cig %>%
+  mutate(CIGTRY_num = suppressWarnings(as.numeric(as.character(CIGTRY)))) %>%
+  mutate(CIGTRY_clean = ifelse(CIGTRY_num >= 1 & CIGTRY_num <= 65, CIGTRY_num, NA_real_))
+
+summary_tbl <- df_for_cig %>% summarise(
+  total = n(),
+  valid_1_65 = sum(!is.na(CIGTRY_clean)),
+  median_1_65 = median(CIGTRY_clean, na.rm = TRUE)
+)
+
+print(summary_tbl)
+
+cat('\nDistinct original CIGTRY codes and counts (top 50):\n')
+print(head(sort(table(df_for_cig$CIGTRY_num), decreasing = TRUE), 50))
+
+```
