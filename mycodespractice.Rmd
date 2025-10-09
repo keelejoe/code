@@ -25,6 +25,13 @@ library(readr)
  vars <-as_tibble(colnames(d))
 ```
 
+#variables of interest, WHAT AGES DO RANGES ACTUALLY CORRELATE TO?
+#soft drugs: IRCIGAGE, IRNICVAPAGE, IRSMKLSSTRY, IRCGRAGE, IRALCAGE, IRMJAGE, 991=NEVER USED
+#hard drugs: IRCOCAGE, IRHERAGE, IRMETHAMAGE, IRHALLUCAGE, 991=NEVER USED 
+#youth experiences aka suicidal thoughts in past year: YUSUITHKYR, .=18+/UNK, 1=YES, 2=NO, 3=IDK, 4=REFUSED
+#adult depression aka mde in lifetime: AMDELT, .=-18/UNK, 1=YES, 2=NO
+
+
 ```{r, new data with vars of interest}
  s <- data %>%
    select(c(QUESTID2, AGE3, CATAG3, HEALTH, IRSEX, CIGTRY, NICVAPAGE, SMKLSSTRY, CIGARTRY, PIPEVER, ALCTRY, MJAGE, COCAGE, HERAGE, METHAMAGE))
@@ -36,6 +43,7 @@ library(readr)
 ```{r, mean}
 mean(s$CIGTRY)
 ```
+
 ```{r, median}
 median(s$CIGTRY)
 ```
