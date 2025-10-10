@@ -26,6 +26,7 @@ library(readr)
 ```
 
 #variables of interest, WHAT AGES DO RANGES ACTUALLY CORRELATE TO?
+#participant ID: QUESTID2
 #soft drugs: IRCIGAGE, IRNICVAPAGE, IRSMKLSSTRY, IRCGRAGE, IRALCAGE, IRMJAGE, 991=NEVER USED
 #hard drugs: IRCOCAGE, IRHERAGE, IRMETHAMAGE, IRHALLUCAGE, 991=NEVER USED 
 #youth experiences aka suicidal thoughts in past year: YUSUITHKYR, .=18+/UNK, 1=YES, 2=NO, 3=IDK, 4=REFUSED
@@ -34,12 +35,13 @@ library(readr)
 
 ```{r, new data with vars of interest}
  s <- data %>%
-   select(c(QUESTID2, AGE3, CATAG3, HEALTH, IRSEX, CIGTRY, NICVAPAGE, SMKLSSTRY, CIGARTRY, PIPEVER, ALCTRY, MJAGE, COCAGE, HERAGE, METHAMAGE))
+   select(c(QUESTID2, IRCIGAGE, IRNICVAPAGE, IRSMKLSSTRY, IRCGRAGE, IRALCAGE, IRMJAGE, IRCOCAGE, IRHERAGE, IRMETHAMAGE, IRHALLUCAGE))
 ```
 
 ```{r, freq}
  freq(s$CIGTRY)
 ```
+
 ```{r, mean}
 mean(s$CIGTRY)
 ```
@@ -48,7 +50,13 @@ mean(s$CIGTRY)
 median(s$CIGTRY)
 ```
 
+```{r, glimpse dataset}
+glimpse(s)
+```
+
 ```{r, cigtry-safe-recode}
+#i dont think i like this...
+
 # Safely coerce CIGTRY to numeric and keep only ages 1..65, then compute median and show counts
 library(dplyr)
 
@@ -71,3 +79,74 @@ cat('\nDistinct original CIGTRY codes and counts (top 50):\n')
 print(head(sort(table(df_for_cig$CIGTRY_num), decreasing = TRUE), 50))
 
 ```
+
+```{r, recode 991 to missing}
+
+df_recoded <- df %>%
+  mutate(IRCIGAGE = if_else(IRCIGAGE == 991, NA_integer_, IRCIGAGE))
+
+print(df_recoded)
+#>   ID IRCIGAGE
+#> 1  1       15
+#> 2  2       17
+#> 3  3       NA
+#> 4  4       14
+#> 5  5       NA
+#> 6  6       18
+
+```
+
+```{r, recode 991 to missing}
+#attempt on IRCIGAGE, success, 
+
+s_recoded <- s %>%
+  mutate(IRCIGAGE = if_else(IRCIGAGE == 991, NA_integer_, IRCIGAGE))
+
+print(s_recoded)
+
+```
+
+```{r, recode 991 to missing}
+#attempt on all vars, 
+#You can give across() a vector of the exact variable names you want to change. The ~ (tilde) creates a mini-function where .x stands in for each variable as it's being processed.
+# List of variables to recode
+
+vars_to_recode <- c("IRCIGAGE", "IRNICVAPAGE", "IRSMKLSSTRY", "IRCGRAGE", 
+                    "IRALCAGE", "IRMJAGE", "IRCOCAGE", "IRHERAGE", 
+                    "IRMETHAMAGE", "IRHALLUCAGE")
+
+# Use across() to apply the same rule to all variables in the list
+# The 'all_of()' function helps select columns from a character vector
+
+s_recoded <- s %>%
+  mutate(across(all_of(vars_to_recode), ~ if_else(.x == 991, NA_integer_, .x)))
+
+print(s_recoded)
+
+```
+
+```{r, mean of s_recoded var}
+
+#To calculate the average of a variable while ignoring the missing (NA) values, you use the argument na.rm = TRUE inside the mean() function.
+
+# Calculate the mean of IRCIGAGE, removing NA values
+summary_stats <- s_recoded %>%
+  summarise(avg_cig_age = mean(IRCIGAGE, na.rm = TRUE))
+
+print(summary_stats)
+
+```
+```{r, mean of all s_recoded vars}
+
+means_of_all <- c("IRCIGAGE", "IRNICVAPAGE", "IRSMKLSSTRY", "IRCGRAGE", 
+                    "IRALCAGE", "IRMJAGE", "IRCOCAGE", "IRHERAGE", 
+                    "IRMETHAMAGE", "IRHALLUCAGE")
+
+summary_stats <- s_recoded %>%
+  summarise(across(all_of(means_of_all), ~ if_else(.x == 991, NA_integer_, .x)))
+mean(IRCIGAGE, na.rm = TRUE
+
+print(summary_stats)
+
+
+
