@@ -16,7 +16,10 @@ install.packages("summarytools")
 install.packages("survey")
 
 ```
-
+* bullet points
+* 
+# headings 
+## smaller heading
 ```{r}
 
 #load packages each session
@@ -29,37 +32,43 @@ library(survey)
 ```{r}
 
 #keep link to data handy
- load("/Users/keelethomas/Downloads/NSDUH_2023.Rdata")
+ load("~/code/NSDUH_2023.Rdata")
  
- ```
+```
  
- ```{r}
- 
+```{r}
+
  #renaming data, or creating extra copy 
- d <-og dataset
+ d <-"~/code/NSDUH_2023.Rdata"
  
- ```
- 
- ```{r}
- 
+```
+
+```{r}
  #basic functions to learn data
  #view all variables
  glimpse(d)
  
- vars <-as.tibble(colnames(d))
+ vars <-as_tibble(colnames(d))
  
- ```
+```
+
  
- ```{r}
+```{r}
  #create new dataset with just var of interest, called a pipe
  #case sensitive when selecting vars
  s <- data %>%
    select(c(AGE3, HEALTH, SEXIDENT22, SPEAKENGL, IRSEX, NEWRACE2))
  
+```
+
+```{r}
  #frequency table
  #dataframe$variable
  freq(s$AGE3)
  
+```
+
+```{r}
  #edit s and save in same dataframe
  #when new var 1 = but specify values within vars then ==
  #or represented by |
@@ -73,6 +82,10 @@ library(survey)
  
 freq(s$ageclean)
  
+```
+
+```{r}
+ 
 #ifelse command to state one condition
 
 s <- s %>%
@@ -83,9 +96,16 @@ addmargins(table(s$AGE3, s$age1820, useNA = "ifany"))
 
 glimpse(s)
 
+```
+
+```{r}
+
 #stats functions
 
 mean(data$AGE3, na.rm=true)
+
+```
+
 
 #survey weights
 #only change the data line
@@ -94,19 +114,32 @@ mean(data$AGE3, na.rm=true)
 #stats with survery weight/design applied, consider in stats dev/output
 #change stat commmands that allow for weights to be used
 
+```{r}
+
 #unweighted count
 freq(d$IRSEX)
+
+```
+
+```{r}
 
 #weighted participant count
 weighted_counts <- svytable(~IRSEX, svy_design)
 weighted_counts
 
+```
+
+
 #weighted and unweighted counts in table 1 describing sample
 #always use weighted counts for stats
+
+```{r}
 
 #weighted proportions
 weighted_proportions <- prop.table(weighted_counts)
 weighted_proportions
+
+```
 
 
 
