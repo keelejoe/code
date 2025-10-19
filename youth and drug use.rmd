@@ -44,14 +44,27 @@ library(readr)
 
 ```{r, composite variable of all drugs ever used}
 
-drug_vars <- select(c(CIGFLAG, CGRFLAG, PIPFLAG, SMKLSSFLAG, NICVAPFLAG, ALCFLAG, CBDHMPFLAG, MRJFLAG, COCFLAG, CRKFLAG, HERFLAG, HALLUCFLAG, INHALFLAG, METHAMFLAG, PNRANYFLAG, TRQANYFLAG, STMANYFLAG, SEDANYFLAG))
+drug_vars <- c("CIGFLAG", "CGRFLAG", "PIPFLAG", "SMKLSSFLAG", "NICVAPFLAG", "ALCFLAG", "CBDHMPFLAG", "MRJFLAG", "COCFLAG", "CRKFLAG", "HERFLAG", "HALLUCFLAG", "INHALFLAG", "METHAMFLAG", "PNRANYFLAG", "TRQANYFLAG", "STMANYFLAG", "SEDANYFLAG")
 
-drug_composite <- s %>%
+ever_used <- s %>%
   mutate(
     any_drug_ever_used = ifelse(rowSums(select(., all_of(drug_vars))) > 0, 1, 0)
   )
 
-cat("\n--- Data with Composite Variable (dplyr method) ---\n")
-print(drug_composite)
+cat("--- Column names in the 'ever_used' dataframe ---\n")
+names(ever_used)
+
+```
+
+```{r, composite variable filtered to only have <18}
+
+youth_ever_used <- ever_used %>%
+  filter(AGE3 %in% c(1, 2, 3))
+
+cat("\n--- Age distribution in the new 'youth_ever_used' dataframe ---\n")
+table(youth_ever_used$AGE3)
+
+cat("\n--- Frequency table for 'any_drug_ever_used' in the youth subset ---\n")
+table(youth_ever_used$any_drug_ever_used)
 
 ```
