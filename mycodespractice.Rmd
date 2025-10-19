@@ -31,6 +31,25 @@ library(readr)
 #hard drugs: IRCOCAGE, IRHERAGE, IRMETHAMAGE, IRHALLUCAGE, 991=NEVER USED 
 #youth experiences aka suicidal thoughts in past year: YUSUITHKYR, .=18+/UNK, 1=YES, 2=NO, 3=IDK, 4=REFUSED
 #adult depression aka mde in lifetime: AMDELT, .=-18/UNK, 1=YES, 2=NO
+#adolescent depression on pg 504
+
+
+
+#subset to <17, use if ever try not age at first try, use all sub categories for having tried any drug, then most commonly exposed to 
+#get variables of interest, keep ID in 
+#make composite variable of all ever used...if alc ever==1 or | cigever
+#look for potential confounders: age, race, ethnicity, household inc/ses, sex, grades in school, measure of anxienty?, parental monitoring
+#two descriptive tables, one of demo characteristics, other of presence of mde and substance use
+#then logistic regression to see if relationship
+
+#start new with complete data management then send off
+
+#for confounder, "a var that is related to exp and out but not in causal pathway" chi square with each confounder and exp and then with outcome, anywhere sig for both then considered a confounder, in many confounder then chunked with what happens earlier in time then later in time, later in time is more modifiable. "age, race, sex" what is significant then carried into next model, then look at social factors
+#crude model then multiple adjusted models as we account for each
+
+#lit review tenish , what confounders do they control for? can help determine my candidate confounders, and common sense of what gets in way of relationship
+#use MeSH database, add to search buiilder, 2000-2025 or last 5 years, observational studies, okay review/systematic review, 
+
 
 
 ```{r, new data with vars of interest}

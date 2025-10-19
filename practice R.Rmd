@@ -32,14 +32,14 @@ library(survey)
 ```{r}
 
 #keep link to data handy
- load("NSDUH_2023.Rdata")
+ load("~/code/NSDUH_2023.Rdata")
  
 ```
  
 ```{r}
 
  #renaming data, or creating extra copy 
- d <-og dataset
+ d <-"~/code/NSDUH_2023.Rdata"
  
 ```
 
@@ -48,7 +48,7 @@ library(survey)
  #view all variables
  glimpse(d)
  
- vars <-as.tibble(colnames(d))
+ vars <-as_tibble(colnames(d))
  
 ```
 
