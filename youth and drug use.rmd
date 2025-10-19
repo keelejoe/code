@@ -1,0 +1,57 @@
+---
+title: "youth and drug use"
+output: html_document
+date: "2025-10-19"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, load packages}
+
+library(tidyverse)
+library(summarytools)
+library(survey)
+library(dplyr)
+```
+
+```{r, load data}
+
+load("~/code/NSDUH_2023.Rdata")
+library(readr)
+```
+
+```{r, renaming}
+
+ d <-"~/code/NSDUH_2023.Rdata"
+
+ vars <-as_tibble(colnames(d))
+```
+
+#variables of interest, WHAT AGES DO RANGES ACTUALLY CORRELATE TO?
+#demographics/confounders: QUESTID2, AGE3, CATAG2 (recoded 12-17=1), IRSEX, NEWRACE2, EDUHIGHCAT, HEALTH2 ??, IRFAMIN3 OR POVERTY3 ??,
+#soft drugs: CIGFLAG, CGRFLAG, PIPFLAG, SMKLSSFLAG, NICVAPFLAG, ALCFLAG, CBDHMPFLAG, MRJFLAG, 0=NEVER USED, 1=EVER USED
+#hard drugs: COCFLAG, CRKFLAG, HERFLAG, HALLUCFLAG, INHALFLAG, METHAMFLAG, PNRANYFLAG, TRQANYFLAG, STMANYFLAG, SEDANYFLAG, 0=NEVER USED, 1=EVER USED
+#youth experiences aka suicidal thoughts in past year: YUSUITHKYR, .=18+/UNK, 1=YES, 2=NO, 3=IDK, 4=REFUSED
+#adolescent depression pg504: lifetime mde YMDELT, .=+18/UNK, 1=YES, 2=NO; past year mde and alc use disorder YMDEAUD5YR, past year mde and illicit drug use disorder YMIUD5YANY, past year mde and substance use disorder YMSUD5YANY, .=+18/UNK, 0=NO, 1=YES
+
+```{r, new data with vars of interest}
+
+ s <- data %>%
+   select(c(QUESTID2, AGE3, CATAG2, IRSEX, NEWRACE2, EDUHIGHCAT, POVERTY3, CIGFLAG, CGRFLAG, PIPFLAG, SMKLSSFLAG, NICVAPFLAG, ALCFLAG, CBDHMPFLAG, MRJFLAG, COCFLAG, CRKFLAG, HERFLAG, HALLUCFLAG, INHALFLAG, METHAMFLAG, PNRANYFLAG, TRQANYFLAG, STMANYFLAG, SEDANYFLAG, YMDELT, YMDEAUD5YR, YMIUD5YANY, YMSUD5YANY))
+```
+
+```{r, composite variable of all drugs ever used}
+
+drug_vars <- select(c(CIGFLAG, CGRFLAG, PIPFLAG, SMKLSSFLAG, NICVAPFLAG, ALCFLAG, CBDHMPFLAG, MRJFLAG, COCFLAG, CRKFLAG, HERFLAG, HALLUCFLAG, INHALFLAG, METHAMFLAG, PNRANYFLAG, TRQANYFLAG, STMANYFLAG, SEDANYFLAG))
+
+drug_composite <- s %>%
+  mutate(
+    any_drug_ever_used = ifelse(rowSums(select(., all_of(drug_vars))) > 0, 1, 0)
+  )
+
+cat("\n--- Data with Composite Variable (dplyr method) ---\n")
+print(drug_composite)
+
+```
