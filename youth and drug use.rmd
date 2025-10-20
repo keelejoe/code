@@ -30,16 +30,17 @@ library(readr)
 ```
 
 #variables of interest, WHAT AGES DO RANGES ACTUALLY CORRELATE TO?
-#demographics/confounders: QUESTID2, AGE3, CATAG2 (recoded 12-17=1), IRSEX, NEWRACE2, EDUHIGHCAT, HEALTH2 ??, IRFAMIN3 OR POVERTY3 ??,
+#demographics/confounders: QUESTID2, AGE3 (1, 2, 3, = 12-17, pg 46), CATAG2 (recoded 12-17=1), IRSEX (1=male, 2=female), NEWRACE2 pg53, EDUHIGHCAT pg53, HEALTH2 ??, IRFAMIN3 OR POVERTY3 ?? pg80,
 #soft drugs: CIGFLAG, CGRFLAG, PIPFLAG, SMKLSSFLAG, NICVAPFLAG, ALCFLAG, CBDHMPFLAG, MRJFLAG, 0=NEVER USED, 1=EVER USED
 #hard drugs: COCFLAG, CRKFLAG, HERFLAG, HALLUCFLAG, INHALFLAG, METHAMFLAG, PNRANYFLAG, TRQANYFLAG, STMANYFLAG, SEDANYFLAG, 0=NEVER USED, 1=EVER USED
-#youth experiences aka suicidal thoughts in past year: YUSUITHKYR, .=18+/UNK, 1=YES, 2=NO, 3=IDK, 4=REFUSED
+#youth experiences: AVGGRADE, .=18+/UNK, 1=D or lower, 2=ABC; PARLMTSN (parents limit time out on school nights in past year) .=18+/UNK, 1=always/sometimes, 2=seldom/never
 #adolescent depression pg504: lifetime mde YMDELT, .=+18/UNK, 1=YES, 2=NO; past year mde and alc use disorder YMDEAUD5YR, past year mde and illicit drug use disorder YMIUD5YANY, past year mde and substance use disorder YMSUD5YANY, .=+18/UNK, 0=NO, 1=YES
+
 
 ```{r, new data with vars of interest}
 
  s <- data %>%
-   select(c(QUESTID2, AGE3, CATAG2, IRSEX, NEWRACE2, EDUHIGHCAT, POVERTY3, CIGFLAG, CGRFLAG, PIPFLAG, SMKLSSFLAG, NICVAPFLAG, ALCFLAG, CBDHMPFLAG, MRJFLAG, COCFLAG, CRKFLAG, HERFLAG, HALLUCFLAG, INHALFLAG, METHAMFLAG, PNRANYFLAG, TRQANYFLAG, STMANYFLAG, SEDANYFLAG, YMDELT, YMDEAUD5YR, YMIUD5YANY, YMSUD5YANY))
+   select(c(QUESTID2, AGE3, CATAG2, IRSEX, NEWRACE2, EDUHIGHCAT, POVERTY3, CIGFLAG, CGRFLAG, PIPFLAG, SMKLSSFLAG, NICVAPFLAG, ALCFLAG, CBDHMPFLAG, MRJFLAG, COCFLAG, CRKFLAG, HERFLAG, HALLUCFLAG, INHALFLAG, METHAMFLAG, PNRANYFLAG, TRQANYFLAG, STMANYFLAG, SEDANYFLAG, YMDELT, YMDEAUD5YR, YMIUD5YANY, YMSUD5YANY, AVGGRADE, PARLMTSN))
 ```
 
 ```{r, composite variable of all drugs ever used}
@@ -74,9 +75,9 @@ table(youth_ever_used$any_drug_ever_used)
 install.packages("tableone")
 library("tableone")
 
- demo_vars <- c("AGE3", "IRSEX", "NEWRACE2", "EDUHIGHCAT", "POVERTY3")
+ demo_vars <- c("AGE3", "IRSEX", "NEWRACE2", "EDUHIGHCAT", "POVERTY3", "AVGGRADE", "PARLMTSN")
  
- demotable <- CreateTableOne(vars = demo_vars, data = s, factorVars = c("IRSEX", "NEWRACE2", "EDUHIGHCAT", "POVERTY3"))
+ demotable <- CreateTableOne(vars = demo_vars, data = s, factorVars = c("IRSEX", "NEWRACE2", "EDUHIGHCAT", "POVERTY3", "AVGGRADE", "PARLMTSN"))
 
  print(demotable, showAllLevels = TRUE)
 
@@ -91,3 +92,213 @@ print(depeudtable, showAllLevels = TRUE)
 
 ```
 
+```{r, find confounders with chi square, age}
+#create contingency tables first
+#ex of any_drug_ever_used and YMDELT, confounder age?
+
+# Select the columns of interest
+adeu_age <- youth_ever_used %>% select(any_drug_ever_used, AGE3)
+
+# Create a contingency table 
+contingency_table <- table(adeu_age$any_drug_ever_used, adeu_age$AGE3)
+
+# View the contingency table
+print(contingency_table)
+
+# Perform chi-square test
+chi_square_test <- chisq.test(contingency_table)
+
+# View the results
+print(chi_square_test)
+
+#does this make sense?
+
+#so now YMDELT and age?
+age_ymde <- youth_ever_used %>% select(YMDELT, AGE3)
+
+# Create a contingency table 
+contingency_table <- table(age_ymde$YMDELT, age_ymde$AGE3)
+
+# View the contingency table
+print(contingency_table)
+
+# Perform chi-square test
+chi_square_test <- chisq.test(contingency_table)
+
+# View the results
+print(chi_square_test)
+
+#so then age is a confounder? this feels maybe not right...
+```
+
+```{r, find confounders with chi square, race}
+
+#any drug and race
+adeu_race <- youth_ever_used %>% select(any_drug_ever_used, NEWRACE2)
+
+contingency_table <- table(adeu_race$any_drug_ever_used, adeu_race$NEWRACE2)
+
+print(contingency_table)
+
+chi_square_test <- chisq.test(contingency_table)
+
+print(chi_square_test)
+
+#ymdelt and race
+
+ymde_race <- youth_ever_used %>% select(YMDELT, NEWRACE2)
+
+contingency_table <- table(ymde_race$YMDELT, ymde_race$NEWRACE2)
+
+print(contingency_table)
+
+chi_square_test <- chisq.test(contingency_table)
+
+print(chi_square_test)
+
+#so again, race is a confounder??
+```
+
+```{r, find confounders with chi square, sex}
+
+#any drug and sex
+adeu_sex <- youth_ever_used %>% select(any_drug_ever_used, IRSEX)
+
+contingency_table <- table(adeu_sex$any_drug_ever_used, adeu_sex$IRSEX)
+
+print(contingency_table)
+
+chi_square_test <- chisq.test(contingency_table)
+
+print(chi_square_test)
+
+#ymdelt and sex
+
+ymde_sex <- youth_ever_used %>% select(YMDELT, IRSEX)
+
+contingency_table <- table(ymde_sex$YMDELT, ymde_sex$IRSEX)
+
+print(contingency_table)
+
+chi_square_test <- chisq.test(contingency_table)
+
+print(chi_square_test)
+
+#is everything a confounder?? should the df not be 1? unsure about the importance of that...
+```
+
+#EDUHIGHCAT, POVERTY3,
+
+```{r, find confounders with chi square, education}
+
+#any drug and education
+adeu_edu <- youth_ever_used %>% select(any_drug_ever_used, EDUHIGHCAT)
+
+contingency_table <- table(adeu_edu$any_drug_ever_used, adeu_edu$EDUHIGHCAT)
+
+print(contingency_table)
+
+chi_square_test <- chisq.test(contingency_table)
+
+print(chi_square_test)
+
+#ymdelt and education
+
+ymde_edu <- youth_ever_used %>% select(YMDELT, EDUHIGHCAT)
+
+contingency_table <- table(ymde_edu$YMDELT, ymde_edu$EDUHIGHCAT)
+
+print(contingency_table)
+
+chi_square_test <- chisq.test(contingency_table)
+
+print(chi_square_test)
+
+#education is a confounder
+```
+
+```{r, find confounders with chi square, poverty}
+
+#any drug and poverty
+adeu_pov <- youth_ever_used %>% select(any_drug_ever_used, POVERTY3)
+
+contingency_table <- table(adeu_pov$any_drug_ever_used, adeu_pov$POVERTY3)
+
+print(contingency_table)
+
+chi_square_test <- chisq.test(contingency_table)
+
+print(chi_square_test)
+
+#ymdelt and poverty
+
+ymde_pov <- youth_ever_used %>% select(YMDELT, POVERTY3)
+
+contingency_table <- table(ymde_pov$YMDELT, ymde_pov$POVERTY3)
+
+print(contingency_table)
+
+chi_square_test <- chisq.test(contingency_table)
+
+print(chi_square_test)
+
+#aha poverty is not a confounder!
+```
+
+#AVGGRADE, PARLMTSN
+
+```{r, find confounders with chi square, avg grades}
+
+#any drug and grades
+adeu_grades <- youth_ever_used %>% select(any_drug_ever_used, AVGGRADE)
+
+contingency_table <- table(adeu_grades$any_drug_ever_used, adeu_grades$AVGGRADE)
+
+print(contingency_table)
+
+chi_square_test <- chisq.test(contingency_table)
+
+print(chi_square_test)
+
+#ymdelt and grades
+
+ymde_grades <- youth_ever_used %>% select(YMDELT, AVGGRADE)
+
+contingency_table <- table(ymde_grades$YMDELT, ymde_grades$AVGGRADE)
+
+print(contingency_table)
+
+chi_square_test <- chisq.test(contingency_table)
+
+print(chi_square_test)
+
+#grades are a confounder
+```
+
+```{r, find confounders with chi square, parental monitoring on school nights}
+
+#any drug and poverty
+adeu_par <- youth_ever_used %>% select(any_drug_ever_used, PARLMTSN)
+
+contingency_table <- table(adeu_par$any_drug_ever_used, adeu_par$PARLMTSN)
+
+print(contingency_table)
+
+chi_square_test <- chisq.test(contingency_table)
+
+print(chi_square_test)
+
+#ymdelt and poverty
+
+ymde_par <- youth_ever_used %>% select(YMDELT, PARLMTSN)
+
+contingency_table <- table(ymde_par$YMDELT, ymde_par$PARLMTSN)
+
+print(contingency_table)
+
+chi_square_test <- chisq.test(contingency_table)
+
+print(chi_square_test)
+
+#parental monitoring is not a confounder, could this be a mediator though?
+```

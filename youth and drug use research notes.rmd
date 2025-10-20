@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 #demographics/confounders: QUESTID2, AGE3 (1, 2, 3, = 12-17, pg 46), CATAG2 (recoded 12-17=1), IRSEX (1=male, 2=female), NEWRACE2 pg53, EDUHIGHCAT pg53, HEALTH2 ??, IRFAMIN3 OR POVERTY3 ?? pg80,
 #soft drugs: CIGFLAG, CGRFLAG, PIPFLAG, SMKLSSFLAG, NICVAPFLAG, ALCFLAG, CBDHMPFLAG, MRJFLAG, 0=NEVER USED, 1=EVER USED
 #hard drugs: COCFLAG, CRKFLAG, HERFLAG, HALLUCFLAG, INHALFLAG, METHAMFLAG, PNRANYFLAG, TRQANYFLAG, STMANYFLAG, SEDANYFLAG, 0=NEVER USED, 1=EVER USED
-#youth experiences aka suicidal thoughts in past year: YUSUITHKYR, .=18+/UNK, 1=YES, 2=NO, 3=IDK, 4=REFUSED
+#youth experiences: AVGGRADE, .=18+/UNK, 1=D or lower, 2=ABC; PARLMTSN (parents limit time out on school nights in past year) .=18+/UNK, 1=always/sometimes, 2=seldom/never
 #adolescent depression pg504: lifetime mde YMDELT, .=+18/UNK, 1=YES, 2=NO; past year mde and alc use disorder YMDEAUD5YR, past year mde and illicit drug use disorder YMIUD5YANY, past year mde and substance use disorder YMSUD5YANY, .=+18/UNK, 0=NO, 1=YES
 
 
@@ -20,13 +20,16 @@ knitr::opts_chunk$set(echo = TRUE)
 #subset to <17, use if ever try, use all sub categories for having tried any drug, then most commonly exposed to 
 #get variables of interest, keep ID in 
 #make composite variable of all ever used...if alc ever==1 or | cigever
-#look for potential confounders: age, race, ethnicity, household inc/ses, sex, grades in school, measure of anxienty?, parental monitoring
+#look for potential confounders: age, race, sex, household inc/ses, grades in school, measure of anxienty?, parental monitoring
 #two descriptive tables, one of demo characteristics, other of presence of mde and substance use
 #then logistic regression to see if relationship
 
 #start new with complete data management then send off
 
-#for confounder, "a var that is related to exp and out but not in causal pathway" chi square with each confounder and exp and then with outcome, anywhere sig for both then considered a confounder, in many confounder then chunked with what happens earlier in time then later in time, later in time is more modifiable. "age, race, sex" what is significant then carried into next model, then look at social factors
+#for confounder, "a var that is related to exp and out but not in causal pathway" chi square with each confounder and exp and then with outcome, 
+  so this looks like age with if ever and then age with ymdelt?
+#anywhere sig for both then considered a confounder, 
+#if many confounder then chunked with what happens earlier in time then later in time, later in time is more modifiable. "age, race, sex" what is significant then carried into next model, then look at social factors
 #crude model then multiple adjusted models as we account for each
 
 #lit review tenish , what confounders do they control for? can help determine my candidate confounders, and common sense of what gets in way of relationship
