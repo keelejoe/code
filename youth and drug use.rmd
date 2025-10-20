@@ -68,3 +68,26 @@ cat("\n--- Frequency table for 'any_drug_ever_used' in the youth subset ---\n")
 table(youth_ever_used$any_drug_ever_used)
 
 ```
+
+```{r, demo characteristics descriptive table}
+
+install.packages("tableone")
+library("tableone")
+
+ demo_vars <- c("AGE3", "IRSEX", "NEWRACE2", "EDUHIGHCAT", "POVERTY3")
+ 
+ demotable <- CreateTableOne(vars = demo_vars, data = s, factorVars = c("IRSEX", "NEWRACE2", "EDUHIGHCAT", "POVERTY3"))
+
+ print(demotable, showAllLevels = TRUE)
+
+```
+```{r, mde and substance use descriptive table}
+
+depeud_vars <- c("YMDELT", "any_drug_ever_used")
+
+depeudtable <- CreateTableOne(vars = depeud_vars, data = youth_ever_used, factorVars = c("YMDELT", "any_drug_ever_used"))
+
+print(depeudtable, showAllLevels = TRUE)
+
+```
+
