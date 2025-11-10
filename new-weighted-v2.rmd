@@ -1,0 +1,226 @@
+---
+title: "Youth and Drug Use (Weighted Analysis)"
+output: html_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+# Load required packages
+library(tidyverse)
+library(survey)
+library(gtsummary)
+library(summarytools)
+
+# Load the dataset (ensure NSDUH_2023.Rdata is in your working directory)
+load("NSDUH_2023.Rdata")
+
+# Create a copy of the dataset
+d <- data
+```
+
+```{r data_preparation}
+# Select relevant variables
+s <- d %>%
+  select(
+    # Core IDs & Weights
+    QUESTID2, VEREP, VESTR_C, ANALWT2_C,
+    
+    # Demographics / Confounders
+    AGE3, CATAG2, IRSEX, NEWRACE2, EDUSCHGRD2, POVERTY3,
+    
+    # Drug Variables (Exposures)
+    CIGFLAG, CGRFLAG, PIPFLAG, SMKLSSFLAG, NICVAPFLAG, ALCFLAG, CBDHMPFLAG, 
+    MRJFLAG, COCFLAG, CRKFLAG, HERFLAG, HALLUCFLAG, INHALFLAG, METHAMFLAG, 
+    PNRANYFLAG, TRQANYFLAG, STMANYFLAG, SEDANYFLAG,
+    
+    # Outcome Variables
+    YMDELT, YMDEAUD5YR, YMIUD5YANY, YMSUD5YANY, 
+    
+    # Other Covariates
+    AVGGRADE, PARLMTSN
+  )
+
+# Define drug variable lists
+drug_vars <- c("CIGFLAG", "CGRFLAG", "PIPFLAG", "SMKLSSFLAG", "NICVAPFLAG", 
+               "ALCFLAG", "CBDHMPFLAG", "MRJFLAG", "COCFLAG", "CRKFLAG", 
+               "HERFLAG", "HALLUCFLAG", "INHALFLAG", "METHAMFLAG", 
+               "PNRANYFLAG", "TRQANYFLAG", "STMANYFLAG", "SEDANYFLAG")
+
+soft_drug_vars <- c("CIGFLAG", "CGRFLAG", "PIPFLAG", "SMKLSSFLAG", 
+                    "NICVAPFLAG", "ALCFLAG", "CBDHMPFLAG", "MRJFLAG")
+
+hard_drug_vars <- c("COCFLAG", "CRKFLAG", "HERFLAG", "HALLUCFLAG", 
+                    "INHALFLAG", "METHAMFLAG", "PNRANYFLAG", "TRQANYFLAG", 
+                    "STMANYFLAG", "SEDANYFLAG")
+
+# Create composite drug use variables
+s_clean <- s %>%
+  mutate(
+    # Main Exposure: Any drug use ever
+    any_drug_ever_used = case_when(
+      if_any(all_of(drug_vars), ~ . == 1) ~ 1,
+      if_all(all_of(drug_vars), ~ . == 0) ~ 0,
+      TRUE ~ NA_real_
+    ),
+    
+    # Secondary: Soft drugs
+    any_soft_drug_ever_used = case_when(
+      if_any(all_of(soft_drug_vars), ~ . == 1) ~ 1,
+      if_all(all_of(soft_drug_vars), ~ . == 0) ~ 0,
+      TRUE ~ NA_real_
+    ),
+    
+    # Secondary: Hard drugs
+    any_hard_drug_ever_used = case_when(
+      if_any(all_of(hard_drug_vars), ~ . == 1) ~ 1,
+      if_all(all_of(hard_drug_vars), ~ . == 0) ~ 0,
+      TRUE ~ NA_real_
+    )
+  )
+
+# Preview the composite variables
+glimpse(s_clean %>% select(any_drug_ever_used, any_soft_drug_ever_used, any_hard_drug_ever_used))
+
+# Define confounders
+confounder_vars <- c("AGE3", "IRSEX", "NEWRACE2", "EDUSCHGRD2", "POVERTY3", "AVGGRADE", "PARLMTSN")
+
+# Prepare analytic dataset for youth
+youth_analytic <- s_clean %>%
+  # Filter for youth (ages 12-17)
+  filter(AGE3 %in% c(1, 2, 3)) %>%
+  
+  # Recode variables
+  mutate(
+    # Recode outcome: Major Depressive Episode (MDE)
+    YMDELT_factor = factor(YMDELT, 
+                           levels = c(1, 2), 
+                           labels = c("Yes", "No")),
+    
+    # Recode demographics
+    AGE3 = factor(AGE3, 
+                  levels = c(1, 2, 3), 
+                  labels = c("12-13", "14-15", "16-17")),
+    
+    IRSEX = factor(IRSEX, 
+                   levels = c(1, 2), 
+                   labels = c("Male", "Female")),
+    
+    any_drug_ever_used_factor = factor(any_drug_ever_used, 
+                                       levels = c(0, 1), 
+                                       labels = c("Never Used", "Ever Used"))
+  ) %>%
+  
+  # List-wise deletion: remove NAs in outcome, exposure, and confounders
+  drop_na(YMDELT_factor, any_drug_ever_used_factor, all_of(confounder_vars))
+
+# Check sample sizes and distributions (unweighted)
+cat("--- Unweighted Age Distribution ---\n")
+print(freq(youth_analytic$AGE3))
+
+cat("\n--- Unweighted Drug Use Distribution ---\n")
+print(freq(youth_analytic$any_drug_ever_used_factor))
+
+cat("\n--- Unweighted Depression Outcome Distribution ---\n")
+print(freq(youth_analytic$YMDELT_factor))
+```
+
+```{r survey_design}
+# Create survey design object
+svy_analytic <- svydesign(
+  id      = ~VEREP,
+  strata  = ~VESTR_C,
+  weights = ~ANALWT2_C,
+  data    = youth_analytic,
+  nest    = TRUE
+)
+
+# Print survey design summary
+print(svy_analytic)
+```
+
+```{r table1}
+# Define variable labels
+var_labels <- list(
+  AGE3 ~ "Age Group",
+  IRSEX ~ "Sex",
+  NEWRACE2 ~ "Race/Ethnicity",
+  EDUSCHGRD2 ~ "Education",
+  POVERTY3 ~ "Poverty Level",
+  AVGGRADE ~ "Average Grades",
+  PARLMTSN ~ "Parental Monitoring",
+  any_drug_ever_used_factor ~ "Any Drug Use (Ever)"
+)
+
+# Generate weighted Table 1 stratified by outcome
+table1 <- svy_analytic %>%
+  tbl_svysummary(
+    by = YMDELT_factor,
+    include = c(AGE3, IRSEX, NEWRACE2, EDUSCHGRD2, POVERTY3, AVGGRADE, 
+                PARLMTSN, any_drug_ever_used_factor),
+    label = var_labels,
+    statistic = list(all_categorical() ~ "{n_unweighted} ({p}%)")
+  ) %>%
+  add_overall(
+    col_label = "**Overall (N = {N_unweighted})**",
+    statistic = list(all_categorical() ~ "{n_unweighted} ({p}%)")
+  ) %>%
+  add_p() %>%
+  modify_header(label = "**Characteristic**") %>%
+  bold_labels()
+
+# Display the table
+table1
+```
+
+```{r confounder_tests}
+# Define variables for testing
+outcome_var <- "YMDELT_factor"
+exposure_var <- "any_drug_ever_used_factor"
+confounders_to_test <- c("AGE3", "IRSEX", "NEWRACE2", "EDUSCHGRD2", 
+                         "POVERTY3", "AVGGRADE", "PARLMTSN")
+
+# Function to safely run svychisq and handle errors
+safe_svychisq <- function(formula, design) {
+  tryCatch({
+    svychisq(formula, design = design)
+  }, error = function(e) {
+    message("Error in svychisq for ", deparse(formula), ": ", e$message)
+    return(NULL)
+  })
+}
+
+# Test confounders vs. outcome
+cat("--- Confounder vs. Outcome (Depression) Tests ---\n")
+conf_outcome_tests <- lapply(confounders_to_test, function(conf) {
+  formula <- as.formula(paste("~", conf, "+", outcome_var))
+  safe_svychisq(formula, svy_analytic)
+})
+names(conf_outcome_tests) <- confounders_to_test
+print(conf_outcome_tests)
+
+# Test confounders vs. exposure
+cat("\n\n--- Confounder vs. Exposure (Drug Use) Tests ---\n")
+conf_exposure_tests <- lapply(confounders_to_test, function(conf) {
+  formula <- as.formula(paste("~", conf, "+", exposure_var))
+  safe_svychisq(formula, svy_analytic)
+})
+names(conf_exposure_tests) <- confounders_to_test
+print(conf_exposure_tests)
+```
+
+```{r debugging, eval=FALSE}
+# Debugging: Check for variables with only one level (run if errors occur)
+# Uncomment and run this chunk if tbl_svysummary or svychisq fails
+
+cat("Checking categorical variables for single levels:\n")
+
+check_vars <- c("AGE3", "IRSEX", "NEWRACE2", "EDUSCHGRD2", "POVERTY3", 
+                "AVGGRADE", "PARLMTSN", "YMDELT_factor", "any_drug_ever_used_factor")
+
+for (var in check_vars) {
+  cat("\n---", var, "---\n")
+  print(table(youth_analytic[[var]], useNA = "ifany"))
+}
+```

@@ -1,0 +1,45 @@
+"variable","test_name","var_type","row_type","var_label","label","stat_0","stat_1","stat_2","estimate","parameter","statistic","p.value"
+"CATAG2","svy.chisq.test","categorical","label","Age Group","Age Group",NA,NA,NA,NA,NA,NA,NA
+"CATAG2","svy.chisq.test","categorical","level","Age Group","12-17","11,164 (9.1%)","2,914 (14%)","8,250 (8.1%)",NA,NA,NA,NA
+"CATAG2","svy.chisq.test","categorical","level","Age Group","18-25","13,157 (12%)","3,467 (19%)","9,690 (11%)",NA,NA,NA,NA
+"CATAG2","svy.chisq.test","categorical","level","Age Group","26-34","30,627 (79%)","5,307 (68%)","25,320 (81%)",NA,NA,NA,NA
+"CATAG2","svy.chisq.test","categorical","level","Age Group","35-49","0 (0%)","0 (0%)","0 (0%)",NA,NA,NA,NA
+"CATAG2","svy.chisq.test","categorical","level","Age Group","50-64","0 (0%)","0 (0%)","0 (0%)",NA,NA,NA,NA
+"CATAG2","svy.chisq.test","categorical","level","Age Group","65+","0 (0%)","0 (0%)","0 (0%)",NA,NA,NA,NA
+"IRSEX","svy.chisq.test","categorical","label","Sex","Sex",NA,NA,NA,NA,NA,249.561300676915,4.47082038045908e-21
+"IRSEX","svy.chisq.test","categorical","level","Sex","Male","25,386 (49%)","3,855 (37%)","21,531 (52%)",NA,NA,NA,NA
+"IRSEX","svy.chisq.test","categorical","level","Sex","Female","29,562 (51%)","7,833 (63%)","21,729 (48%)",NA,NA,NA,NA
+"NEWRACE2","svy.chisq.test","categorical","label","Race/Ethnicity","Race/Ethnicity",NA,NA,NA,NA,NA,37.5503504697592,6.78703051086875e-29
+"NEWRACE2","svy.chisq.test","categorical","level","Race/Ethnicity","1","30,209 (60%)","7,094 (67%)","23,115 (59%)",NA,NA,NA,NA
+"NEWRACE2","svy.chisq.test","categorical","level","Race/Ethnicity","2","6,489 (12%)","912 (8.5%)","5,577 (13%)",NA,NA,NA,NA
+"NEWRACE2","svy.chisq.test","categorical","level","Race/Ethnicity","3","1,144 (0.5%)","182 (0.3%)","962 (0.5%)",NA,NA,NA,NA
+"NEWRACE2","svy.chisq.test","categorical","level","Race/Ethnicity","4","277 (0.4%)","30 (0.2%)","247 (0.4%)",NA,NA,NA,NA
+"NEWRACE2","svy.chisq.test","categorical","level","Race/Ethnicity","5","2,670 (6.1%)","382 (3.7%)","2,288 (6.6%)",NA,NA,NA,NA
+"NEWRACE2","svy.chisq.test","categorical","level","Race/Ethnicity","6","2,647 (2.2%)","825 (3.6%)","1,822 (1.9%)",NA,NA,NA,NA
+"NEWRACE2","svy.chisq.test","categorical","level","Race/Ethnicity","7","11,512 (18%)","2,263 (16%)","9,249 (19%)",NA,NA,NA,NA
+"EDUHIGHCAT","svy.chisq.test","categorical","label","Education","Education",NA,NA,NA,NA,NA,70.9850062512662,7.35194813485133e-34
+"EDUHIGHCAT","svy.chisq.test","categorical","level","Education","1","4,790 (8.5%)","716 (4.9%)","4,074 (9.3%)",NA,NA,NA,NA
+"EDUHIGHCAT","svy.chisq.test","categorical","level","Education","2","11,661 (24%)","2,008 (18%)","9,653 (26%)",NA,NA,NA,NA
+"EDUHIGHCAT","svy.chisq.test","categorical","level","Education","3","12,687 (27%)","3,092 (32%)","9,595 (26%)",NA,NA,NA,NA
+"EDUHIGHCAT","svy.chisq.test","categorical","level","Education","4","14,646 (31%)","2,958 (31%)","11,688 (31%)",NA,NA,NA,NA
+"EDUHIGHCAT","svy.chisq.test","categorical","level","Education","5","11,164 (9.1%)","2,914 (14%)","8,250 (8.1%)",NA,NA,NA,NA
+"POVERTY3","svy.chisq.test","categorical","label","Poverty Level","Poverty Level",NA,NA,NA,NA,NA,4.52979621962254,0.0166250000628643
+"POVERTY3","svy.chisq.test","categorical","level","Poverty Level","1","11,214 (16%)","2,343 (17%)","8,871 (16%)",NA,NA,NA,NA
+"POVERTY3","svy.chisq.test","categorical","level","Poverty Level","2","10,922 (19%)","2,502 (21%)","8,420 (19%)",NA,NA,NA,NA
+"POVERTY3","svy.chisq.test","categorical","level","Poverty Level","3","32,812 (65%)","6,843 (63%)","25,969 (65%)",NA,NA,NA,NA
+"any_drug_ever_used_factor","svy.chisq.test","categorical","label","Any Drug Use (Ever)","Any Drug Use (Ever)",NA,NA,NA,NA,NA,192.612664791071,8.90571321162758e-19
+"any_drug_ever_used_factor","svy.chisq.test","categorical","level","Any Drug Use (Ever)","Never Used","8,983 (11%)","1,128 (6.4%)","7,855 (12%)",NA,NA,NA,NA
+"any_drug_ever_used_factor","svy.chisq.test","categorical","level","Any Drug Use (Ever)","Ever Used","45,965 (89%)","10,560 (94%)","35,405 (88%)",NA,NA,NA,NA
+"any_soft_drug_ever_used_factor","svy.chisq.test","categorical","label","Soft Drug Use (Ever)","Soft Drug Use (Ever)",NA,NA,NA,NA,NA,84.2977135772123,2.62494054616589e-12
+"any_soft_drug_ever_used_factor","svy.chisq.test","categorical","level","Soft Drug Use (Ever)","Never Used","12,470 (16%)","1,858 (11%)","10,612 (17%)",NA,NA,NA,NA
+"any_soft_drug_ever_used_factor","svy.chisq.test","categorical","level","Soft Drug Use (Ever)","Ever Used","42,478 (84%)","9,830 (89%)","32,648 (83%)",NA,NA,NA,NA
+"any_hard_drug_ever_used_factor","svy.chisq.test","categorical","label","Hard Drug Use (Ever)","Hard Drug Use (Ever)",NA,NA,NA,NA,NA,789.805921501416,2.70933435144804e-32
+"any_hard_drug_ever_used_factor","svy.chisq.test","categorical","level","Hard Drug Use (Ever)","Never Used","22,771 (35%)","3,267 (20%)","19,504 (38%)",NA,NA,NA,NA
+"any_hard_drug_ever_used_factor","svy.chisq.test","categorical","level","Hard Drug Use (Ever)","Ever Used","32,177 (65%)","8,421 (80%)","23,756 (62%)",NA,NA,NA,NA
+"drug_type","svy.chisq.test","categorical","label","Drug Type Category","Drug Type Category",NA,NA,NA,NA,NA,205.135880859715,1.04522641686892e-46
+"drug_type","svy.chisq.test","categorical","level","Drug Type Category","None","8,983 (11%)","1,128 (6.4%)","7,855 (12%)",NA,NA,NA,NA
+"drug_type","svy.chisq.test","categorical","level","Drug Type Category","Soft Only","13,788 (24%)","2,139 (14%)","11,649 (26%)",NA,NA,NA,NA
+"drug_type","svy.chisq.test","categorical","level","Drug Type Category","Hard Only","3,487 (4.6%)","730 (4.6%)","2,757 (4.6%)",NA,NA,NA,NA
+"drug_type","svy.chisq.test","categorical","level","Drug Type Category","Both","28,690 (60%)","7,691 (75%)","20,999 (57%)",NA,NA,NA,NA
+"min_age_soft","svy.wilcox.test","continuous","label","Min Age at First Soft Drug Use","Min Age at First Soft Drug Use","178 (363)","134 (319)","187 (371)",0.0797560092705283,49,13.428149688774,4.82770173680781e-18
+"min_age_hard","svy.wilcox.test","continuous","label","Min Age at First Hard Drug Use","Min Age at First Hard Drug Use","778 (402)","666 (458)","801 (385)",0.0704995109793061,49,14.6753739221145,1.45534478465837e-19
