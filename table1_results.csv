@@ -1,45 +1,97 @@
 "variable","test_name","var_type","row_type","var_label","label","stat_0","stat_1","stat_2","estimate","parameter","statistic","p.value"
-"CATAG2","svy.chisq.test","categorical","label","Age Group","Age Group",NA,NA,NA,NA,NA,NA,NA
-"CATAG2","svy.chisq.test","categorical","level","Age Group","12-17","11,164 (9.1%)","2,914 (14%)","8,250 (8.1%)",NA,NA,NA,NA
-"CATAG2","svy.chisq.test","categorical","level","Age Group","18-25","13,157 (12%)","3,467 (19%)","9,690 (11%)",NA,NA,NA,NA
-"CATAG2","svy.chisq.test","categorical","level","Age Group","26-34","30,627 (79%)","5,307 (68%)","25,320 (81%)",NA,NA,NA,NA
-"CATAG2","svy.chisq.test","categorical","level","Age Group","35-49","0 (0%)","0 (0%)","0 (0%)",NA,NA,NA,NA
-"CATAG2","svy.chisq.test","categorical","level","Age Group","50-64","0 (0%)","0 (0%)","0 (0%)",NA,NA,NA,NA
-"CATAG2","svy.chisq.test","categorical","level","Age Group","65+","0 (0%)","0 (0%)","0 (0%)",NA,NA,NA,NA
-"IRSEX","svy.chisq.test","categorical","label","Sex","Sex",NA,NA,NA,NA,NA,249.561300676915,4.47082038045908e-21
-"IRSEX","svy.chisq.test","categorical","level","Sex","Male","25,386 (49%)","3,855 (37%)","21,531 (52%)",NA,NA,NA,NA
-"IRSEX","svy.chisq.test","categorical","level","Sex","Female","29,562 (51%)","7,833 (63%)","21,729 (48%)",NA,NA,NA,NA
-"NEWRACE2","svy.chisq.test","categorical","label","Race/Ethnicity","Race/Ethnicity",NA,NA,NA,NA,NA,37.5503504697592,6.78703051086875e-29
-"NEWRACE2","svy.chisq.test","categorical","level","Race/Ethnicity","1","30,209 (60%)","7,094 (67%)","23,115 (59%)",NA,NA,NA,NA
-"NEWRACE2","svy.chisq.test","categorical","level","Race/Ethnicity","2","6,489 (12%)","912 (8.5%)","5,577 (13%)",NA,NA,NA,NA
-"NEWRACE2","svy.chisq.test","categorical","level","Race/Ethnicity","3","1,144 (0.5%)","182 (0.3%)","962 (0.5%)",NA,NA,NA,NA
-"NEWRACE2","svy.chisq.test","categorical","level","Race/Ethnicity","4","277 (0.4%)","30 (0.2%)","247 (0.4%)",NA,NA,NA,NA
-"NEWRACE2","svy.chisq.test","categorical","level","Race/Ethnicity","5","2,670 (6.1%)","382 (3.7%)","2,288 (6.6%)",NA,NA,NA,NA
-"NEWRACE2","svy.chisq.test","categorical","level","Race/Ethnicity","6","2,647 (2.2%)","825 (3.6%)","1,822 (1.9%)",NA,NA,NA,NA
-"NEWRACE2","svy.chisq.test","categorical","level","Race/Ethnicity","7","11,512 (18%)","2,263 (16%)","9,249 (19%)",NA,NA,NA,NA
-"EDUHIGHCAT","svy.chisq.test","categorical","label","Education","Education",NA,NA,NA,NA,NA,70.9850062512662,7.35194813485133e-34
-"EDUHIGHCAT","svy.chisq.test","categorical","level","Education","1","4,790 (8.5%)","716 (4.9%)","4,074 (9.3%)",NA,NA,NA,NA
-"EDUHIGHCAT","svy.chisq.test","categorical","level","Education","2","11,661 (24%)","2,008 (18%)","9,653 (26%)",NA,NA,NA,NA
-"EDUHIGHCAT","svy.chisq.test","categorical","level","Education","3","12,687 (27%)","3,092 (32%)","9,595 (26%)",NA,NA,NA,NA
-"EDUHIGHCAT","svy.chisq.test","categorical","level","Education","4","14,646 (31%)","2,958 (31%)","11,688 (31%)",NA,NA,NA,NA
-"EDUHIGHCAT","svy.chisq.test","categorical","level","Education","5","11,164 (9.1%)","2,914 (14%)","8,250 (8.1%)",NA,NA,NA,NA
-"POVERTY3","svy.chisq.test","categorical","label","Poverty Level","Poverty Level",NA,NA,NA,NA,NA,4.52979621962254,0.0166250000628643
-"POVERTY3","svy.chisq.test","categorical","level","Poverty Level","1","11,214 (16%)","2,343 (17%)","8,871 (16%)",NA,NA,NA,NA
-"POVERTY3","svy.chisq.test","categorical","level","Poverty Level","2","10,922 (19%)","2,502 (21%)","8,420 (19%)",NA,NA,NA,NA
-"POVERTY3","svy.chisq.test","categorical","level","Poverty Level","3","32,812 (65%)","6,843 (63%)","25,969 (65%)",NA,NA,NA,NA
-"any_drug_ever_used_factor","svy.chisq.test","categorical","label","Any Drug Use (Ever)","Any Drug Use (Ever)",NA,NA,NA,NA,NA,192.612664791071,8.90571321162758e-19
-"any_drug_ever_used_factor","svy.chisq.test","categorical","level","Any Drug Use (Ever)","Never Used","8,983 (11%)","1,128 (6.4%)","7,855 (12%)",NA,NA,NA,NA
-"any_drug_ever_used_factor","svy.chisq.test","categorical","level","Any Drug Use (Ever)","Ever Used","45,965 (89%)","10,560 (94%)","35,405 (88%)",NA,NA,NA,NA
-"any_soft_drug_ever_used_factor","svy.chisq.test","categorical","label","Soft Drug Use (Ever)","Soft Drug Use (Ever)",NA,NA,NA,NA,NA,84.2977135772123,2.62494054616589e-12
-"any_soft_drug_ever_used_factor","svy.chisq.test","categorical","level","Soft Drug Use (Ever)","Never Used","12,470 (16%)","1,858 (11%)","10,612 (17%)",NA,NA,NA,NA
-"any_soft_drug_ever_used_factor","svy.chisq.test","categorical","level","Soft Drug Use (Ever)","Ever Used","42,478 (84%)","9,830 (89%)","32,648 (83%)",NA,NA,NA,NA
-"any_hard_drug_ever_used_factor","svy.chisq.test","categorical","label","Hard Drug Use (Ever)","Hard Drug Use (Ever)",NA,NA,NA,NA,NA,789.805921501416,2.70933435144804e-32
-"any_hard_drug_ever_used_factor","svy.chisq.test","categorical","level","Hard Drug Use (Ever)","Never Used","22,771 (35%)","3,267 (20%)","19,504 (38%)",NA,NA,NA,NA
-"any_hard_drug_ever_used_factor","svy.chisq.test","categorical","level","Hard Drug Use (Ever)","Ever Used","32,177 (65%)","8,421 (80%)","23,756 (62%)",NA,NA,NA,NA
-"drug_type","svy.chisq.test","categorical","label","Drug Type Category","Drug Type Category",NA,NA,NA,NA,NA,205.135880859715,1.04522641686892e-46
-"drug_type","svy.chisq.test","categorical","level","Drug Type Category","None","8,983 (11%)","1,128 (6.4%)","7,855 (12%)",NA,NA,NA,NA
-"drug_type","svy.chisq.test","categorical","level","Drug Type Category","Soft Only","13,788 (24%)","2,139 (14%)","11,649 (26%)",NA,NA,NA,NA
-"drug_type","svy.chisq.test","categorical","level","Drug Type Category","Hard Only","3,487 (4.6%)","730 (4.6%)","2,757 (4.6%)",NA,NA,NA,NA
-"drug_type","svy.chisq.test","categorical","level","Drug Type Category","Both","28,690 (60%)","7,691 (75%)","20,999 (57%)",NA,NA,NA,NA
-"min_age_soft","svy.wilcox.test","continuous","label","Min Age at First Soft Drug Use","Min Age at First Soft Drug Use","178 (363)","134 (319)","187 (371)",0.0797560092705283,49,13.428149688774,4.82770173680781e-18
-"min_age_hard","svy.wilcox.test","continuous","label","Min Age at First Hard Drug Use","Min Age at First Hard Drug Use","778 (402)","666 (458)","801 (385)",0.0704995109793061,49,14.6753739221145,1.45534478465837e-19
+"AGE3","svy.chisq.test","categorical","label","Age Group","Age Group",NA,NA,NA,NA,NA,43.2108560383221,7.41827249754453e-12
+"AGE3","svy.chisq.test","categorical","level","Age Group","12-13","2,757 (29%)","531 (18%)","2,226 (33%)",NA,NA,NA,NA
+"AGE3","svy.chisq.test","categorical","level","Age Group","14-15","3,406 (36%)","960 (37%)","2,446 (36%)",NA,NA,NA,NA
+"AGE3","svy.chisq.test","categorical","level","Age Group","16-17","3,284 (36%)","1,148 (45%)","2,136 (32%)",NA,NA,NA,NA
+"IRSEX","svy.chisq.test","categorical","label","Sex","Sex",NA,NA,NA,NA,NA,247.973355167005,5.10876098341132e-21
+"IRSEX","svy.chisq.test","categorical","level","Sex","Male","4,798 (50%)","755 (27%)","4,043 (59%)",NA,NA,NA,NA
+"IRSEX","svy.chisq.test","categorical","level","Sex","Female","4,649 (50%)","1,884 (73%)","2,765 (41%)",NA,NA,NA,NA
+"NEWRACE2","svy.chisq.test","categorical","label","Race/Ethnicity","Race/Ethnicity",NA,NA,NA,NA,NA,4.6858685152091,0.000402696342998056
+"NEWRACE2","svy.chisq.test","categorical","level","Race/Ethnicity","1","4,265 (51%)","1,226 (53%)","3,039 (50%)",NA,NA,NA,NA
+"NEWRACE2","svy.chisq.test","categorical","level","Race/Ethnicity","2","1,164 (13%)","240 (9.2%)","924 (15%)",NA,NA,NA,NA
+"NEWRACE2","svy.chisq.test","categorical","level","Race/Ethnicity","3","320 (0.8%)","74 (0.8%)","246 (0.8%)",NA,NA,NA,NA
+"NEWRACE2","svy.chisq.test","categorical","level","Race/Ethnicity","4","39 (0.3%)","6 (0.2%)","33 (0.3%)",NA,NA,NA,NA
+"NEWRACE2","svy.chisq.test","categorical","level","Race/Ethnicity","5","461 (5.8%)","102 (4.8%)","359 (6.2%)",NA,NA,NA,NA
+"NEWRACE2","svy.chisq.test","categorical","level","Race/Ethnicity","6","719 (3.6%)","233 (4.5%)","486 (3.3%)",NA,NA,NA,NA
+"NEWRACE2","svy.chisq.test","categorical","level","Race/Ethnicity","7","2,479 (26%)","758 (27%)","1,721 (25%)",NA,NA,NA,NA
+"EDUSCHGRD2","svy.wilcox.test","continuous","label","Education","Education","6 (4, 7)","6 (5, 7)","5 (4, 7)",-0.0849774320652475,49,-10.1070691356242,1.41194080723659e-13
+"POVERTY3","svy.chisq.test","categorical","label","Poverty Level","Poverty Level",NA,NA,NA,NA,NA,0.646520268618301,0.524919327941838
+"POVERTY3","svy.chisq.test","categorical","level","Poverty Level","1","2,155 (21%)","576 (20%)","1,579 (21%)",NA,NA,NA,NA
+"POVERTY3","svy.chisq.test","categorical","level","Poverty Level","2","2,029 (20%)","609 (22%)","1,420 (20%)",NA,NA,NA,NA
+"POVERTY3","svy.chisq.test","categorical","level","Poverty Level","3","5,263 (59%)","1,454 (58%)","3,809 (59%)",NA,NA,NA,NA
+"AVGGRADE","svy.chisq.test","categorical","label","Average Grades","Average Grades",NA,NA,NA,NA,NA,2.66625212398291,0.108779689990488
+"AVGGRADE","svy.chisq.test","categorical","level","Average Grades","1","555 (4.5%)","200 (5.2%)","355 (4.2%)",NA,NA,NA,NA
+"AVGGRADE","svy.chisq.test","categorical","level","Average Grades","2","8,892 (95%)","2,439 (95%)","6,453 (96%)",NA,NA,NA,NA
+"PARLMTSN","svy.chisq.test","categorical","label","Parental Monitoring","Parental Monitoring",NA,NA,NA,NA,NA,1.51818374536144,0.223657528076382
+"PARLMTSN","svy.chisq.test","categorical","level","Parental Monitoring","1","5,444 (57%)","1,484 (56%)","3,960 (58%)",NA,NA,NA,NA
+"PARLMTSN","svy.chisq.test","categorical","level","Parental Monitoring","2","4,003 (43%)","1,155 (44%)","2,848 (42%)",NA,NA,NA,NA
+"EDFAM18","svy.chisq.test","categorical","label","Family Structure at 18","Family Structure at 18",NA,NA,NA,NA,NA,2.23919434485187,0.115098263616014
+"EDFAM18","svy.chisq.test","categorical","level","Family Structure at 18","0","9,411 (100%)","2,628 (99%)","6,783 (100%)",NA,NA,NA,NA
+"EDFAM18","svy.chisq.test","categorical","level","Family Structure at 18","1","29 (0.3%)","8 (0.5%)","21 (0.2%)",NA,NA,NA,NA
+"EDFAM18","svy.chisq.test","categorical","level","Family Structure at 18","98","7 (<0.1%)","3 (0.1%)","4 (<0.1%)",NA,NA,NA,NA
+"IMOTHER","svy.chisq.test","categorical","label","Mother in Household","Mother in Household",NA,NA,NA,NA,NA,0.482934130458211,0.603789654515121
+"IMOTHER","svy.chisq.test","categorical","level","Mother in Household","1","8,598 (91%)","2,369 (91%)","6,229 (92%)",NA,NA,NA,NA
+"IMOTHER","svy.chisq.test","categorical","level","Mother in Household","2","811 (8.3%)","260 (8.9%)","551 (8.1%)",NA,NA,NA,NA
+"IMOTHER","svy.chisq.test","categorical","level","Mother in Household","3","38 (0.4%)","10 (0.3%)","28 (0.4%)",NA,NA,NA,NA
+"IFATHER","svy.chisq.test","categorical","label","Father in Household","Father in Household",NA,NA,NA,NA,NA,1.01591112906174,0.363901230459418
+"IFATHER","svy.chisq.test","categorical","level","Father in Household","1","6,764 (75%)","1,844 (73%)","4,920 (75%)",NA,NA,NA,NA
+"IFATHER","svy.chisq.test","categorical","level","Father in Household","2","2,627 (25%)","779 (26%)","1,848 (24%)",NA,NA,NA,NA
+"IFATHER","svy.chisq.test","categorical","level","Father in Household","3","56 (0.5%)","16 (0.6%)","40 (0.5%)",NA,NA,NA,NA
+"YEYARGUP","svy.chisq.test","categorical","label","Youth Arguments","Youth Arguments",NA,NA,NA,NA,NA,70.009583559655,7.04527547710637e-46
+"YEYARGUP","svy.chisq.test","categorical","level","Youth Arguments","1","1,842 (19%)","201 (6.5%)","1,641 (23%)",NA,NA,NA,NA
+"YEYARGUP","svy.chisq.test","categorical","level","Youth Arguments","2","2,656 (28%)","489 (18%)","2,167 (32%)",NA,NA,NA,NA
+"YEYARGUP","svy.chisq.test","categorical","level","Youth Arguments","3","2,021 (22%)","645 (24%)","1,376 (22%)",NA,NA,NA,NA
+"YEYARGUP","svy.chisq.test","categorical","level","Youth Arguments","4","1,044 (11%)","426 (18%)","618 (8.9%)",NA,NA,NA,NA
+"YEYARGUP","svy.chisq.test","categorical","level","Youth Arguments","5","1,814 (19%)","859 (33%)","955 (14%)",NA,NA,NA,NA
+"YEYARGUP","svy.chisq.test","categorical","level","Youth Arguments","94","49 (0.5%)","13 (0.4%)","36 (0.5%)",NA,NA,NA,NA
+"YEYARGUP","svy.chisq.test","categorical","level","Youth Arguments","97","21 (0.2%)","6 (0.2%)","15 (0.2%)",NA,NA,NA,NA
+"YEPPROUD","svy.chisq.test","categorical","label","Youth Proud of Parents","Youth Proud of Parents",NA,NA,NA,NA,NA,94.7669481196656,1.95061525157249e-43
+"YEPPROUD","svy.chisq.test","categorical","level","Youth Proud of Parents","1","4,635 (49%)","822 (29%)","3,813 (57%)",NA,NA,NA,NA
+"YEPPROUD","svy.chisq.test","categorical","level","Youth Proud of Parents","2","2,975 (33%)","890 (36%)","2,085 (32%)",NA,NA,NA,NA
+"YEPPROUD","svy.chisq.test","categorical","level","Youth Proud of Parents","3","1,257 (13%)","609 (24%)","648 (8.4%)",NA,NA,NA,NA
+"YEPPROUD","svy.chisq.test","categorical","level","Youth Proud of Parents","4","562 (5.1%)","315 (11%)","247 (2.8%)",NA,NA,NA,NA
+"YEPPROUD","svy.chisq.test","categorical","level","Youth Proud of Parents","94","13 (0.1%)","2 (0.1%)","11 (0.1%)",NA,NA,NA,NA
+"YEPPROUD","svy.chisq.test","categorical","level","Youth Proud of Parents","97","5 (<0.1%)","1 (<0.1%)","4 (<0.1%)",NA,NA,NA,NA
+"YEYFGTSW","svy.chisq.test","categorical","label","Youth Fights","Youth Fights",NA,NA,NA,NA,NA,7.36096552716612,7.6314628333022e-06
+"YEYFGTSW","svy.chisq.test","categorical","level","Youth Fights","1","7,876 (85%)","2,091 (80%)","5,785 (86%)",NA,NA,NA,NA
+"YEYFGTSW","svy.chisq.test","categorical","level","Youth Fights","2","1,235 (12%)","416 (15%)","819 (11%)",NA,NA,NA,NA
+"YEYFGTSW","svy.chisq.test","categorical","level","Youth Fights","3","224 (2.3%)","88 (3.4%)","136 (1.9%)",NA,NA,NA,NA
+"YEYFGTSW","svy.chisq.test","categorical","level","Youth Fights","4","48 (0.5%)","18 (0.8%)","30 (0.4%)",NA,NA,NA,NA
+"YEYFGTSW","svy.chisq.test","categorical","level","Youth Fights","5","46 (0.4%)","22 (0.7%)","24 (0.3%)",NA,NA,NA,NA
+"YEYFGTSW","svy.chisq.test","categorical","level","Youth Fights","94","12 (0.1%)","2 (<0.1%)","10 (0.1%)",NA,NA,NA,NA
+"YEYFGTSW","svy.chisq.test","categorical","level","Youth Fights","97","6 (<0.1%)","2 (<0.1%)","4 (<0.1%)",NA,NA,NA,NA
+"YEPGDJOB","svy.chisq.test","categorical","label","Youth Good Job","Youth Good Job",NA,NA,NA,NA,NA,81.6785272123788,1.39667970155432e-37
+"YEPGDJOB","svy.chisq.test","categorical","level","Youth Good Job","1","4,622 (50%)","800 (28%)","3,822 (58%)",NA,NA,NA,NA
+"YEPGDJOB","svy.chisq.test","categorical","level","Youth Good Job","2","3,175 (34%)","1,004 (40%)","2,171 (32%)",NA,NA,NA,NA
+"YEPGDJOB","svy.chisq.test","categorical","level","Youth Good Job","3","1,191 (12%)","587 (23%)","604 (8.1%)",NA,NA,NA,NA
+"YEPGDJOB","svy.chisq.test","categorical","level","Youth Good Job","4","443 (4.1%)","245 (8.6%)","198 (2.5%)",NA,NA,NA,NA
+"YEPGDJOB","svy.chisq.test","categorical","level","Youth Good Job","94","14 (0.1%)","2 (0.1%)","12 (0.1%)",NA,NA,NA,NA
+"YEPGDJOB","svy.chisq.test","categorical","level","Youth Good Job","97","2 (<0.1%)","1 (<0.1%)","1 (<0.1%)",NA,NA,NA,NA
+"YESCHACT","svy.chisq.test","categorical","label","Youth School Activities","Youth School Activities",NA,NA,NA,NA,NA,4.48847849098101,0.00199810277216161
+"YESCHACT","svy.chisq.test","categorical","level","Youth School Activities","0","1,802 (18%)","592 (22%)","1,210 (16%)",NA,NA,NA,NA
+"YESCHACT","svy.chisq.test","categorical","level","Youth School Activities","1","2,437 (26%)","650 (25%)","1,787 (26%)",NA,NA,NA,NA
+"YESCHACT","svy.chisq.test","categorical","level","Youth School Activities","2","2,528 (27%)","665 (25%)","1,863 (28%)",NA,NA,NA,NA
+"YESCHACT","svy.chisq.test","categorical","level","Youth School Activities","3","2,650 (29%)","728 (28%)","1,922 (30%)",NA,NA,NA,NA
+"YESCHACT","svy.chisq.test","categorical","level","Youth School Activities","94","25 (0.2%)","4 (<0.1%)","21 (0.2%)",NA,NA,NA,NA
+"YESCHACT","svy.chisq.test","categorical","level","Youth School Activities","97","5 (<0.1%)","0 (0%)","5 (<0.1%)",NA,NA,NA,NA
+"YECOMACT","svy.chisq.test","categorical","label","Youth Community Activities","Youth Community Activities",NA,NA,NA,NA,NA,5.9075049997974,0.000128997526771664
+"YECOMACT","svy.chisq.test","categorical","level","Youth Community Activities","0","2,678 (27%)","833 (33%)","1,845 (25%)",NA,NA,NA,NA
+"YECOMACT","svy.chisq.test","categorical","level","Youth Community Activities","1","2,524 (27%)","684 (25%)","1,840 (28%)",NA,NA,NA,NA
+"YECOMACT","svy.chisq.test","categorical","level","Youth Community Activities","2","2,098 (22%)","525 (20%)","1,573 (23%)",NA,NA,NA,NA
+"YECOMACT","svy.chisq.test","categorical","level","Youth Community Activities","3","2,091 (23%)","581 (22%)","1,510 (23%)",NA,NA,NA,NA
+"YECOMACT","svy.chisq.test","categorical","level","Youth Community Activities","94","51 (0.5%)","16 (0.4%)","35 (0.5%)",NA,NA,NA,NA
+"YECOMACT","svy.chisq.test","categorical","level","Youth Community Activities","97","5 (<0.1%)","0 (0%)","5 (<0.1%)",NA,NA,NA,NA
+"any_drug_ever_used_factor","svy.chisq.test","categorical","label","Any Drug Use (Ever)","Any Drug Use (Ever)",NA,NA,NA,NA,NA,223.257055284392,4.49035593223887e-20
+"any_drug_ever_used_factor","svy.chisq.test","categorical","level","Any Drug Use (Ever)","Never Used","4,470 (49%)","763 (31%)","3,707 (56%)",NA,NA,NA,NA
+"any_drug_ever_used_factor","svy.chisq.test","categorical","level","Any Drug Use (Ever)","Ever Used","4,977 (51%)","1,876 (69%)","3,101 (44%)",NA,NA,NA,NA
+"any_soft_drug_ever_used_factor","svy.chisq.test","categorical","label","Soft Drug Use (Ever)","Soft Drug Use (Ever)",NA,NA,NA,NA,NA,176.291378381867,5.12523145237804e-18
+"any_soft_drug_ever_used_factor","svy.chisq.test","categorical","level","Soft Drug Use (Ever)","Never Used","5,969 (65%)","1,180 (47%)","4,789 (72%)",NA,NA,NA,NA
+"any_soft_drug_ever_used_factor","svy.chisq.test","categorical","level","Soft Drug Use (Ever)","Ever Used","3,478 (35%)","1,459 (53%)","2,019 (28%)",NA,NA,NA,NA
+"any_hard_drug_ever_used_factor","svy.chisq.test","categorical","label","Hard Drug Use (Ever)","Hard Drug Use (Ever)",NA,NA,NA,NA,NA,115.779146944843,1.29032260705264e-14
+"any_hard_drug_ever_used_factor","svy.chisq.test","categorical","level","Hard Drug Use (Ever)","Never Used","6,339 (68%)","1,450 (54%)","4,889 (72%)",NA,NA,NA,NA
+"any_hard_drug_ever_used_factor","svy.chisq.test","categorical","level","Hard Drug Use (Ever)","Ever Used","3,108 (32%)","1,189 (46%)","1,919 (28%)",NA,NA,NA,NA
+"drug_type","svy.chisq.test","categorical","label","Drug Type Category","Drug Type Category",NA,NA,NA,NA,NA,93.097179850333,2.13256459359308e-31
+"drug_type","svy.chisq.test","categorical","level","Drug Type Category","None","4,470 (49%)","763 (31%)","3,707 (56%)",NA,NA,NA,NA
+"drug_type","svy.chisq.test","categorical","level","Drug Type Category","Soft Only","1,869 (18%)","687 (23%)","1,182 (16%)",NA,NA,NA,NA
+"drug_type","svy.chisq.test","categorical","level","Drug Type Category","Hard Only","1,499 (16%)","417 (16%)","1,082 (16%)",NA,NA,NA,NA
+"drug_type","svy.chisq.test","categorical","level","Drug Type Category","Both","1,609 (16%)","772 (29%)","837 (11%)",NA,NA,NA,NA
