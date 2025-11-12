@@ -1,0 +1,374 @@
+---
+title: "Youth and Drug Use (Weighted Analysis)"
+output: html_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+# Load required packages
+library(tidyverse)
+library(survey)
+library(gtsummary)
+library(summarytools)
+library(dtplyr)  # For efficient data.table-backed dplyr operations
+library(kableExtra)  # For enhanced table formatting
+library(broom)  # For tidying model outputs
+
+# Load the dataset (ensure NSDUH_2023.Rdata is in your working directory)
+load("NSDUH_2023.Rdata")
+
+# Create a copy of the dataset
+d <- data
+```
+
+```{r functions}
+# Function to create composite drug use variables
+create_composite <- function(data, vars, name) {
+  data %>%
+    mutate(
+      !!sym(name) := case_when(
+        if_any(all_of(vars), ~ . == 1) ~ 1,
+        if_all(all_of(vars), ~ . == 0) ~ 0,
+        TRUE ~ NA_real_
+      )
+    )
+}
+
+# Function to compute minimum age at first use for a set of drugs
+compute_min_age <- function(data, age_vars, name) {
+  data %>%
+    mutate(
+      !!sym(name) := pmin(!!!syms(age_vars), na.rm = TRUE)
+    ) %>%
+    mutate(
+      !!sym(name) := if_else(is.infinite(!!sym(name)), NA_real_, !!sym(name))
+    )
+}
+```
+
+```{r data_preparation}
+# Select relevant variables (using dtplyr for efficiency)
+s <- d %>% 
+  lazy_dt() %>% 
+  select(
+    # Core IDs & Weights
+    QUESTID2, VEREP, VESTR_C, ANALWT2_C,
+    
+    # Demographics / Confounders
+    AGE3, CATAG2, IRSEX, NEWRACE2, EDUSCHGRD2, POVERTY3,
+    
+    # Drug Variables (Exposures)
+    CIGFLAG, CGRFLAG, PIPFLAG, SMKLSSFLAG, NICVAPFLAG, ALCFLAG, CBDHMPFLAG, 
+    MRJFLAG, COCFLAG, CRKFLAG, HERFLAG, HALLUCFLAG, INHALFLAG, METHAMFLAG, 
+    PNRANYFLAG, TRQANYFLAG, STMANYFLAG, SEDANYFLAG,
+    
+    # Age at First Use Variables
+    IRCIGAGE, IRNICVAPAGE, IRSMKLSSTRY, IRCGRAGE, IRALCAGE, IRMJAGE,  # Soft drugs
+    IRCOCAGE, IRHERAGE, IRMETHAMAGE, IRHALLUCAGE, IRLSDAGE, IRECSTMOAGE,  # Hard drugs
+    
+    # Outcome Variables
+    YMDELT, YMDEAUD5YR, YMIUD5YANY, YMSUD5YANY, 
+    
+    # Other Covariates
+    AVGGRADE, PARLMTSN
+  ) %>% 
+  as_tibble()
+
+# Define drug variable lists
+all_drug_vars <- c("CIGFLAG", "CGRFLAG", "PIPFLAG", "SMKLSSFLAG", "NICVAPFLAG", 
+                   "ALCFLAG", "CBDHMPFLAG", "MRJFLAG", "COCFLAG", "CRKFLAG", 
+                   "HERFLAG", "HALLUCFLAG", "INHALFLAG", "METHAMFLAG", 
+                   "PNRANYFLAG", "TRQANYFLAG", "STMANYFLAG", "SEDANYFLAG")
+
+soft_drug_vars <- c("CIGFLAG", "CGRFLAG", "PIPFLAG", "SMKLSSFLAG", 
+                    "NICVAPFLAG", "ALCFLAG", "CBDHMPFLAG", "MRJFLAG")
+
+hard_drug_vars <- c("COCFLAG", "CRKFLAG", "HERFLAG", "HALLUCFLAG", 
+                    "INHALFLAG", "METHAMFLAG", "PNRANYFLAG", "TRQANYFLAG", 
+                    "STMANYFLAG", "SEDANYFLAG")
+
+# Define age at first use lists
+soft_age_vars <- c("IRCIGAGE", "IRNICVAPAGE", "IRSMKLSSTRY", "IRCGRAGE", "IRALCAGE", "IRMJAGE")
+hard_age_vars <- c("IRCOCAGE", "IRHERAGE", "IRMETHAMAGE", "IRHALLUCAGE", "IRLSDAGE", "IRECSTMOAGE")
+
+# Create composite variables using the function
+s_clean <- s %>%
+  create_composite(all_drug_vars, "any_drug_ever_used") %>%
+  create_composite(soft_drug_vars, "any_soft_drug_ever_used") %>%
+  create_composite(hard_drug_vars, "any_hard_drug_ever_used") %>%
+  compute_min_age(soft_age_vars, "min_age_soft") %>%
+  compute_min_age(hard_age_vars, "min_age_hard")
+
+# Preview the composite variables
+glimpse(s_clean %>% select(any_drug_ever_used, any_soft_drug_ever_used, any_hard_drug_ever_used, min_age_soft, min_age_hard))
+
+# Define confounders
+confounder_vars <- c("AGE3", "IRSEX", "NEWRACE2", "EDUSCHGRD2", "POVERTY3", "AVGGRADE", "PARLMTSN")
+
+# Prepare analytic dataset for youth
+youth_analytic <- s_clean %>%
+  # Filter for youth (ages 12-17)
+  filter(AGE3 %in% c(1, 2, 3)) %>%
+  
+  # Recode variables
+  mutate(
+    # Recode outcome: Major Depressive Episode (MDE)
+    YMDELT_factor = factor(YMDELT, 
+                           levels = c(1, 2), 
+                           labels = c("Yes", "No")),
+    
+    # Recode demographics
+    AGE3 = factor(AGE3, 
+                  levels = c(1, 2, 3), 
+                  labels = c("12-13", "14-15", "16-17")),
+    
+    IRSEX = factor(IRSEX, 
+                   levels = c(1, 2), 
+                   labels = c("Male", "Female")),
+    
+    any_drug_ever_used_factor = factor(any_drug_ever_used, 
+                                       levels = c(0, 1), 
+                                       labels = c("Never Used", "Ever Used")),
+    
+    # New composites for soft and hard
+    any_soft_drug_ever_used_factor = factor(any_soft_drug_ever_used, 
+                                            levels = c(0, 1), 
+                                            labels = c("Never Used", "Ever Used")),
+    
+    any_hard_drug_ever_used_factor = factor(any_hard_drug_ever_used, 
+                                            levels = c(0, 1), 
+                                            labels = c("Never Used", "Ever Used")),
+    
+    # Combined drug type variable
+    drug_type = case_when(
+      any_soft_drug_ever_used == 1 & any_hard_drug_ever_used == 0 ~ "Soft Only",
+      any_hard_drug_ever_used == 1 & any_soft_drug_ever_used == 0 ~ "Hard Only",
+      any_soft_drug_ever_used == 1 & any_hard_drug_ever_used == 1 ~ "Both",
+      any_soft_drug_ever_used == 0 & any_hard_drug_ever_used == 0 ~ "None",
+      TRUE ~ NA_character_
+    ) %>%
+      factor(levels = c("None", "Soft Only", "Hard Only", "Both"), ordered = FALSE)
+  ) %>%
+  
+  # List-wise deletion: remove NAs in outcome, exposures, drug_type, and confounders
+  drop_na(YMDELT_factor, any_drug_ever_used_factor, any_soft_drug_ever_used_factor, 
+          any_hard_drug_ever_used_factor, drug_type, all_of(confounder_vars))
+
+# Report dropped rows
+original_rows <- nrow(s_clean %>% filter(AGE3 %in% c(1, 2, 3)))
+final_rows <- nrow(youth_analytic)
+cat("Dropped", original_rows - final_rows, "rows due to NAs (out of", original_rows, "youth rows).\n")
+
+# Check sample sizes and distributions (unweighted)
+cat("--- Unweighted Age Distribution ---\n")
+print(freq(youth_analytic$AGE3))
+
+cat("\n--- Unweighted Any Drug Use Distribution ---\n")
+print(freq(youth_analytic$any_drug_ever_used_factor))
+
+cat("\n--- Unweighted Soft Drug Use Distribution ---\n")
+print(freq(youth_analytic$any_soft_drug_ever_used_factor))
+
+cat("\n--- Unweighted Hard Drug Use Distribution ---\n")
+print(freq(youth_analytic$any_hard_drug_ever_used_factor))
+
+cat("\n--- Unweighted Drug Type Distribution ---\n")
+print(freq(youth_analytic$drug_type))
+
+cat("\n--- Unweighted Depression Outcome Distribution ---\n")
+print(freq(youth_analytic$YMDELT_factor))
+
+# Summary of age at first use
+cat("\n--- Summary of Min Age at First Soft Drug Use (among users) ---\n")
+youth_analytic %>% filter(any_soft_drug_ever_used == 1) %>% select(min_age_soft) %>% summary()
+
+cat("\n--- Summary of Min Age at First Hard Drug Use (among users) ---\n")
+youth_analytic %>% filter(any_hard_drug_ever_used == 1) %>% select(min_age_hard) %>% summary()
+```
+
+```{r survey_design}
+# Create survey design object
+svy_analytic <- svydesign(
+  id      = ~VEREP,
+  strata  = ~VESTR_C,
+  weights = ~ANALWT2_C,
+  data    = youth_analytic,
+  nest    = TRUE
+)
+
+# Print survey design summary
+print(svy_analytic)
+```
+
+```{r table1}
+# Define variable labels
+var_labels <- list(
+  AGE3 ~ "Age Group",
+  IRSEX ~ "Sex",
+  NEWRACE2 ~ "Race/Ethnicity",
+  EDUSCHGRD2 ~ "Education",
+  POVERTY3 ~ "Poverty Level",
+  AVGGRADE ~ "Average Grades",
+  PARLMTSN ~ "Parental Monitoring",
+  any_drug_ever_used_factor ~ "Any Drug Use (Ever)",
+  any_soft_drug_ever_used_factor ~ "Soft Drug Use (Ever)",
+  any_hard_drug_ever_used_factor ~ "Hard Drug Use (Ever)",
+  drug_type ~ "Drug Type Category",
+  min_age_soft ~ "Min Age at First Soft Drug Use",
+  min_age_hard ~ "Min Age at First Hard Drug Use"
+)
+
+# Generate weighted Table 1 stratified by outcome
+table1 <- svy_analytic %>%
+  tbl_svysummary(
+    by = YMDELT_factor,
+    include = c(AGE3, IRSEX, NEWRACE2, EDUSCHGRD2, POVERTY3, AVGGRADE, 
+                PARLMTSN, any_drug_ever_used_factor, any_soft_drug_ever_used_factor, 
+                any_hard_drug_ever_used_factor, drug_type, min_age_soft, min_age_hard),
+    label = var_labels,
+    statistic = list(all_categorical() ~ "{n_unweighted} ({p}%)", all_continuous() ~ "{mean} ({sd})")
+  ) %>%
+  add_overall(
+    col_label = "**Overall (N = {N_unweighted})**",
+    statistic = list(all_categorical() ~ "{n_unweighted} ({p}%)", all_continuous() ~ "{mean} ({sd})")
+  ) %>%
+  add_p() %>%
+  modify_header(label = "**Characteristic**") %>%
+  bold_labels()
+
+# Display the table with kableExtra for better formatting
+table1 %>%
+  as_kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+
+# Export table to CSV
+write.csv(table1$table_body, "table1_results.csv", row.names = FALSE)
+```
+
+```{r confounder_tests}
+# Define variables for testing
+outcome_var <- "YMDELT_factor"
+all_exposures <- c("any_drug_ever_used_factor", "any_soft_drug_ever_used_factor", "any_hard_drug_ever_used_factor")
+confounders_to_test <- c("AGE3", "IRSEX", "NEWRACE2", "EDUSCHGRD2", 
+                         "POVERTY3", "AVGGRADE", "PARLMTSN")
+
+# Function to safely run svychisq and handle errors
+safe_svychisq <- function(formula, design) {
+  tryCatch({
+    svychisq(formula, design = design)
+  }, error = function(e) {
+    message("Error in svychisq for ", deparse(formula), ": ", e$message)
+    return(NULL)
+  })
+}
+
+# Test confounders vs. outcome
+cat("--- Confounder vs. Outcome (Depression) Tests ---\n")
+conf_outcome_tests <- lapply(confounders_to_test, function(conf) {
+  formula <- as.formula(paste("~", conf, "+", outcome_var))
+  safe_svychisq(formula, svy_analytic)
+})
+names(conf_outcome_tests) <- confounders_to_test
+print(conf_outcome_tests)
+
+# Test confounders vs. each exposure
+for (exp in all_exposures) {
+  cat("\n\n--- Confounder vs.", exp, "Tests ---\n")
+  conf_exposure_tests <- lapply(confounders_to_test, function(conf) {
+    formula <- as.formula(paste("~", conf, "+", exp))
+    safe_svychisq(formula, svy_analytic)
+  })
+  names(conf_exposure_tests) <- confounders_to_test
+  print(conf_exposure_tests)
+}
+
+# Test confounders vs. drug_type
+cat("\n\n--- Confounder vs. Drug Type Tests ---\n")
+drug_type_tests <- lapply(confounders_to_test, function(conf) {
+  formula <- as.formula(paste("~", conf, "+", "drug_type"))
+  safe_svychisq(formula, svy_analytic)
+})
+names(drug_type_tests) <- confounders_to_test
+print(drug_type_tests)
+```
+
+```{r logistic_regression}
+# Function to fit and summarize weighted logistic regression
+fit_logistic <- function(exposure, confounders, design) {
+  formula <- as.formula(paste(outcome_var, "~", exposure, "+", paste(confounders, collapse = " + ")))
+  model <- svyglm(formula, design = design, family = quasibinomial())
+  tidy(model, conf.int = TRUE, exponentiate = TRUE)  # Odds ratios with CIs
+}
+
+# Fit models for each exposure
+models <- list()
+for (exp in all_exposures) {
+  cat("\n\n--- Logistic Regression for", exp, "vs. MDE ---\n")
+  models[[exp]] <- fit_logistic(exp, confounders_to_test, svy_analytic)
+  print(models[[exp]])
+}
+
+# Fit combined model with drug_type as predictor
+cat("\n\n--- Logistic Regression for Drug Type Category vs. MDE ---\n")
+drug_type_model <- fit_logistic("drug_type", confounders_to_test, svy_analytic)
+print(drug_type_model)
+
+# New: Models including age at first use
+cat("\n\n--- Logistic Regression for Soft Drug Use + Min Age at First Soft Use vs. MDE ---\n")
+soft_age_model <- fit_logistic(c("any_soft_drug_ever_used_factor", "min_age_soft"), confounders_to_test, svy_analytic)
+print(soft_age_model)
+
+cat("\n\n--- Logistic Regression for Hard Drug Use + Min Age at First Hard Use vs. MDE ---\n")
+hard_age_model <- fit_logistic(c("any_hard_drug_ever_used_factor", "min_age_hard"), confounders_to_test, svy_analytic)
+print(hard_age_model)
+
+# Export model results
+for (exp in names(models)) {
+  write.csv(models[[exp]], paste0("logistic_", exp, "_results.csv"), row.names = FALSE)
+}
+write.csv(drug_type_model, "logistic_drug_type_results.csv", row.names = FALSE)
+write.csv(soft_age_model, "logistic_soft_age_results.csv", row.names = FALSE)
+write.csv(hard_age_model, "logistic_hard_age_results.csv", row.names = FALSE)
+```
+
+```{r interpretation}
+# Interpretation Section
+cat("## Results Interpretation\n\n")
+cat("### Table 1:\n")
+cat("- This table shows weighted distributions of characteristics stratified by MDE status, including drug type and age at first use.\n")
+cat("- Significant p-values indicate differences between groups (e.g., earlier age at first use in MDE cases).\n\n")
+
+cat("### Confounder Tests:\n")
+cat("- Chi-square tests assess associations between confounders and outcome/exposures/drug type.\n")
+cat("- Significant results suggest potential confounding (adjust for these in models).\n\n")
+
+cat("### Logistic Regression:\n")
+cat("- Models estimate adjusted odds ratios (OR) for MDE by drug use type.\n")
+cat("- OR > 1 indicates increased MDE risk; 95% CI not crossing 1 means statistical significance.\n")
+cat("- New models include age at first use: Earlier initiation may predict higher MDE odds.\n")
+cat("- For example, younger age at first soft/hard use could increase risk.\n\n")
+
+cat("### Notes:\n")
+cat("- Analysis uses survey weights for national representativeness.\n")
+cat("- Missing data handled via list-wise deletion (", original_rows - final_rows, " rows dropped).\n")
+cat("- Age at first use is min across drugs; only computed for users.\n")
+cat("- Consider multiple imputation for future robustness.\n")
+```
+
+```{r debugging, eval=FALSE}
+# Debugging: Check for variables with only one level (run if errors occur)
+# Uncomment and run this chunk if tbl_svysummary or svychisq fails
+
+cat("Checking categorical variables for single levels:\n")
+
+check_vars <- c("AGE3", "IRSEX", "NEWRACE2", "EDUSCHGRD2", "POVERTY3", 
+                "AVGGRADE", "PARLMTSN", "YMDELT_factor", "any_drug_ever_used_factor",
+                "any_soft_drug_ever_used_factor", "any_hard_drug_ever_used_factor", "drug_type")
+
+for (var in check_vars) {
+  cat("\n---", var, "---\n")
+  print(table(youth_analytic[[var]], useNA = "ifany"))
+}
+```
