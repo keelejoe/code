@@ -81,17 +81,17 @@
 "YECOMACT","svy.chisq.test","categorical","level","Youth Community Activities","3","2,091 (23%)","581 (22%)","1,510 (23%)",NA,NA,NA,NA
 "YECOMACT","svy.chisq.test","categorical","level","Youth Community Activities","94","51 (0.5%)","16 (0.4%)","35 (0.5%)",NA,NA,NA,NA
 "YECOMACT","svy.chisq.test","categorical","level","Youth Community Activities","97","5 (<0.1%)","0 (0%)","5 (<0.1%)",NA,NA,NA,NA
-"any_drug_ever_used_factor","svy.chisq.test","categorical","label","Any Drug Use (Ever)","Any Drug Use (Ever)",NA,NA,NA,NA,NA,223.257055284392,4.49035593223887e-20
-"any_drug_ever_used_factor","svy.chisq.test","categorical","level","Any Drug Use (Ever)","Never Used","4,470 (49%)","763 (31%)","3,707 (56%)",NA,NA,NA,NA
-"any_drug_ever_used_factor","svy.chisq.test","categorical","level","Any Drug Use (Ever)","Ever Used","4,977 (51%)","1,876 (69%)","3,101 (44%)",NA,NA,NA,NA
+"any_drug_ever_used_factor","svy.chisq.test","categorical","label","Any Drug Use (Ever)","Any Drug Use (Ever)",NA,NA,NA,NA,NA,245.308977650542,6.40048005572594e-21
+"any_drug_ever_used_factor","svy.chisq.test","categorical","level","Any Drug Use (Ever)","Never Used","5,209 (57%)","919 (37%)","4,290 (65%)",NA,NA,NA,NA
+"any_drug_ever_used_factor","svy.chisq.test","categorical","level","Any Drug Use (Ever)","Ever Used","4,238 (43%)","1,720 (63%)","2,518 (35%)",NA,NA,NA,NA
 "any_soft_drug_ever_used_factor","svy.chisq.test","categorical","label","Soft Drug Use (Ever)","Soft Drug Use (Ever)",NA,NA,NA,NA,NA,176.291378381867,5.12523145237804e-18
 "any_soft_drug_ever_used_factor","svy.chisq.test","categorical","level","Soft Drug Use (Ever)","Never Used","5,969 (65%)","1,180 (47%)","4,789 (72%)",NA,NA,NA,NA
 "any_soft_drug_ever_used_factor","svy.chisq.test","categorical","level","Soft Drug Use (Ever)","Ever Used","3,478 (35%)","1,459 (53%)","2,019 (28%)",NA,NA,NA,NA
-"any_hard_drug_ever_used_factor","svy.chisq.test","categorical","label","Hard Drug Use (Ever)","Hard Drug Use (Ever)",NA,NA,NA,NA,NA,115.779146944843,1.29032260705264e-14
-"any_hard_drug_ever_used_factor","svy.chisq.test","categorical","level","Hard Drug Use (Ever)","Never Used","6,339 (68%)","1,450 (54%)","4,889 (72%)",NA,NA,NA,NA
-"any_hard_drug_ever_used_factor","svy.chisq.test","categorical","level","Hard Drug Use (Ever)","Ever Used","3,108 (32%)","1,189 (46%)","1,919 (28%)",NA,NA,NA,NA
-"drug_type","svy.chisq.test","categorical","label","Drug Type Category","Drug Type Category",NA,NA,NA,NA,NA,93.097179850333,2.13256459359308e-31
-"drug_type","svy.chisq.test","categorical","level","Drug Type Category","None","4,470 (49%)","763 (31%)","3,707 (56%)",NA,NA,NA,NA
-"drug_type","svy.chisq.test","categorical","level","Drug Type Category","Soft Only","1,869 (18%)","687 (23%)","1,182 (16%)",NA,NA,NA,NA
-"drug_type","svy.chisq.test","categorical","level","Drug Type Category","Hard Only","1,499 (16%)","417 (16%)","1,082 (16%)",NA,NA,NA,NA
-"drug_type","svy.chisq.test","categorical","level","Drug Type Category","Both","1,609 (16%)","772 (29%)","837 (11%)",NA,NA,NA,NA
+"any_hard_drug_ever_used_factor","svy.chisq.test","categorical","label","Hard Drug Use (Ever)","Hard Drug Use (Ever)",NA,NA,NA,NA,NA,128.613779969627,1.97143644160326e-15
+"any_hard_drug_ever_used_factor","svy.chisq.test","categorical","level","Hard Drug Use (Ever)","Never Used","7,648 (82%)","1,814 (70%)","5,834 (86%)",NA,NA,NA,NA
+"any_hard_drug_ever_used_factor","svy.chisq.test","categorical","level","Hard Drug Use (Ever)","Ever Used","1,799 (18%)","825 (30%)","974 (14%)",NA,NA,NA,NA
+"drug_type","svy.chisq.test","categorical","label","Drug Type Category","Drug Type Category",NA,NA,NA,NA,NA,89.3853166928386,3.7574315657769e-31
+"drug_type","svy.chisq.test","categorical","level","Drug Type Category","None","5,209 (57%)","919 (37%)","4,290 (65%)",NA,NA,NA,NA
+"drug_type","svy.chisq.test","categorical","level","Drug Type Category","Soft Only","2,439 (24%)","895 (33%)","1,544 (21%)",NA,NA,NA,NA
+"drug_type","svy.chisq.test","categorical","level","Drug Type Category","Hard Only","760 (8.1%)","261 (9.9%)","499 (7.4%)",NA,NA,NA,NA
+"drug_type","svy.chisq.test","categorical","level","Drug Type Category","Both","1,039 (10%)","564 (20%)","475 (6.4%)",NA,NA,NA,NA
