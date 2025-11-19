@@ -14,7 +14,7 @@ library(gtsummary)
 library(summarytools)
 
 # Load the dataset (ensure NSDUH_2023.Rdata is in your working directory)
-load("NSDUH_2023.Rdata")
+#load("NSDUH_2023.Rdata")
 
 # Create a copy of the dataset
 d <- data
@@ -39,7 +39,8 @@ s <- d %>%
     YMDELT, YMDEAUD5YR, YMIUD5YANY, YMSUD5YANY, 
     
     # Other Covariates
-    AVGGRADE, PARLMTSN
+    AVGGRADE, PARLMTSN, EDFAM18, IMOTHER, IFATHER, YEYARGUP, YEPPROUD,
+    YEYFGTSW, YEPGDJOB, YESCHACT, YECOMACT
   )
 
 # Define drug variable lists
@@ -84,7 +85,9 @@ s_clean <- s %>%
 glimpse(s_clean %>% select(any_drug_ever_used, any_soft_drug_ever_used, any_hard_drug_ever_used))
 
 # Define confounders
-confounder_vars <- c("AGE3", "IRSEX", "NEWRACE2", "EDUSCHGRD2", "POVERTY3", "AVGGRADE", "PARLMTSN")
+confounder_vars <- c("AGE3", "IRSEX", "NEWRACE2", "EDUSCHGRD2", "POVERTY3", "AVGGRADE", "PARLMTSN",
+                     "EDFAM18", "IMOTHER", "IFATHER", "YEYARGUP", "YEPPROUD",
+                      "YEYFGTSW", "YEPGDJOB", "YESCHACT", "YECOMACT")
 
 # Prepare analytic dataset for youth
 youth_analytic <- s_clean %>%
@@ -124,7 +127,25 @@ print(freq(youth_analytic$any_drug_ever_used_factor))
 
 cat("\n--- Unweighted Depression Outcome Distribution ---\n")
 print(freq(youth_analytic$YMDELT_factor))
+
+
+
+youth_analytic <- youth_analytic %>% 
+  mutate(
+    EDUSCHGRD2 = ifelse(EDUSCHGRD2>10, NA, EDUSCHGRD2))
+
+youth_analytic <- youth_analytic %>% 
+  mutate(
+    EDUSCHGRD2 = as.factor(EDUSCHGRD2),
+    NEWRACE2   = as.factor(NEWRACE2))
+
+youth_analytic <- youth_analytic %>% 
+  mutate(
+    depepisode = ifelse(YMDELT_factor=="Yes", 1, 0)
+  )
 ```
+
+
 
 ```{r survey_design}
 # Create survey design object
@@ -139,7 +160,7 @@ svy_analytic <- svydesign(
 # Print survey design summary
 print(svy_analytic)
 ```
-
+# unweighted counts & percents
 ```{r table1}
 # Define variable labels
 var_labels <- list(
@@ -149,16 +170,13 @@ var_labels <- list(
   EDUSCHGRD2 ~ "Education",
   POVERTY3 ~ "Poverty Level",
   AVGGRADE ~ "Average Grades",
-  PARLMTSN ~ "Parental Monitoring",
-  any_drug_ever_used_factor ~ "Any Drug Use (Ever)"
-)
+  PARLMTSN ~ "Parental Monitoring")
 
-# Generate weighted Table 1 stratified by outcome
+# Generate unweighted Table 1 stratified by outcome
 table1 <- svy_analytic %>%
   tbl_svysummary(
-    by = YMDELT_factor,
     include = c(AGE3, IRSEX, NEWRACE2, EDUSCHGRD2, POVERTY3, AVGGRADE, 
-                PARLMTSN, any_drug_ever_used_factor),
+                PARLMTSN),
     label = var_labels,
     statistic = list(all_categorical() ~ "{n_unweighted} ({p}%)")
   ) %>%
@@ -166,7 +184,6 @@ table1 <- svy_analytic %>%
     col_label = "**Overall (N = {N_unweighted})**",
     statistic = list(all_categorical() ~ "{n_unweighted} ({p}%)")
   ) %>%
-  add_p() %>%
   modify_header(label = "**Characteristic**") %>%
   bold_labels()
 
@@ -174,12 +191,174 @@ table1 <- svy_analytic %>%
 table1
 ```
 
+# Weighted counts, percents, CIs
+```{r}
+
+# Weighted counts
+weighted_counts <- svytable(~AGE3, svy_analytic)
+weighted_counts
+# Weighted proportions & 95% CI:
+svyprop <- svymean(~factor(AGE3), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+# Combine results into a table
+tbl <- data.frame(
+  AGE3 = names(weighted_counts),
+  Weighted_Count = as.numeric(weighted_counts),
+  Proportion = coef(svyprop),
+  SE = SE(svyprop),
+  CI_Lower = confint(svyprop)[, 1],
+  CI_Upper = confint(svyprop)[, 2]
+)
+
+tbl
+
+########################################################################################################
+
+# Weighted counts
+weighted_counts <- svytable(~IRSEX, svy_analytic)
+weighted_counts
+# Weighted proportions & 95% CI:
+svyprop <- svymean(~factor(IRSEX), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+
+# Combine results into a table
+tbl <- data.frame(
+  IRSEX = names(weighted_counts),
+  Weighted_Count = as.numeric(weighted_counts),
+  Proportion = coef(svyprop),
+  CI_Lower = confint(svyprop)[, 1],
+  CI_Upper = confint(svyprop)[, 2]
+)
+
+tbl
+
+########################################################################################################
+
+# Weighted counts
+weighted_counts <- svytable(~EDUSCHGRD2, svy_analytic)
+weighted_counts
+# Weighted proportions & 95% CI:
+svyprop <- svymean(~factor(EDUSCHGRD2), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+
+# Combine results into a table
+tbl <- data.frame(
+  EDUSCHGRD2 = names(weighted_counts),
+  Weighted_Count = as.numeric(weighted_counts),
+  Proportion = coef(svyprop),
+  CI_Lower = confint(svyprop)[, 1],
+  CI_Upper = confint(svyprop)[, 2]
+)
+
+tbl
+
+########################################################################################################
+
+# Weighted counts
+weighted_counts <- svytable(~NEWRACE2, svy_analytic)
+weighted_counts
+# Weighted proportions & 95% CI:
+svyprop <- svymean(~factor(NEWRACE2), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+
+# Combine results into a table
+tbl <- data.frame(
+  NEWRACE2 = names(weighted_counts),
+  Weighted_Count = as.numeric(weighted_counts),
+  Proportion = coef(svyprop),
+  CI_Lower = confint(svyprop)[, 1],
+  CI_Upper = confint(svyprop)[, 2]
+)
+
+tbl
+
+########################################################################################################
+
+# Weighted counts
+weighted_counts <- svytable(~POVERTY3, svy_analytic)
+weighted_counts
+# Weighted proportions & 95% CI:
+svyprop <- svymean(~factor(POVERTY3), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+
+# Combine results into a table
+tbl <- data.frame(
+  POVERTY3 = names(weighted_counts),
+  Weighted_Count = as.numeric(weighted_counts),
+  Proportion = coef(svyprop),
+  CI_Lower = confint(svyprop)[, 1],
+  CI_Upper = confint(svyprop)[, 2]
+)
+
+tbl
+
+########################################################################################################
+
+# Weighted counts
+weighted_counts <- svytable(~AVGGRADE, svy_analytic)
+weighted_counts
+# Weighted proportions & 95% CI:
+svyprop <- svymean(~factor(AVGGRADE), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+
+# Combine results into a table
+tbl <- data.frame(
+  AVGGRADE = names(weighted_counts),
+  Weighted_Count = as.numeric(weighted_counts),
+  Proportion = coef(svyprop),
+  CI_Lower = confint(svyprop)[, 1],
+  CI_Upper = confint(svyprop)[, 2]
+)
+
+tbl
+
+########################################################################################################
+
+# Weighted counts
+weighted_counts <- svytable(~PARLMTSN, svy_analytic)
+weighted_counts
+# Weighted proportions & 95% CI:
+svyprop <- svymean(~factor(PARLMTSN), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+
+# Combine results into a table
+tbl <- data.frame(
+  PARLMTSN = names(weighted_counts),
+  Weighted_Count = as.numeric(weighted_counts),
+  Proportion = coef(svyprop),
+  CI_Lower = confint(svyprop)[, 1],
+  CI_Upper = confint(svyprop)[, 2]
+)
+
+tbl
+
+```
+
+# Confounder check - any drug
 ```{r confounder_tests}
 # Define variables for testing
 outcome_var <- "YMDELT_factor"
 exposure_var <- "any_drug_ever_used_factor"
 confounders_to_test <- c("AGE3", "IRSEX", "NEWRACE2", "EDUSCHGRD2", 
-                         "POVERTY3", "AVGGRADE", "PARLMTSN")
+                         "POVERTY3", "AVGGRADE", "PARLMTSN",
+                         "EDFAM18", "IMOTHER",    "IFATHER",    "YEYARGUP",
+                         "YEPPROUD",   "YEYFGTSW",   "YEPGDJOB",  "YESCHACT", "YECOMACT" )
+
+
 
 # Function to safely run svychisq and handle errors
 safe_svychisq <- function(formula, design) {
@@ -209,6 +388,209 @@ conf_exposure_tests <- lapply(confounders_to_test, function(conf) {
 names(conf_exposure_tests) <- confounders_to_test
 print(conf_exposure_tests)
 ```
+# Regression - Aim 1 - SB version, ORs and CIs not printing
+```{r}
+
+# CRUDE
+m1 <- svyglm(depepisode ~ as.factor(any_drug_ever_used_factor), design = svy_analytic, family = quasibinomial)
+summary(m1)
+# print OR and 95% CI
+ci1 <- as.table(exp(cbind(OR = coef(m1), confint(m1))))
+logLik(m1)
+
+# Epoch 1 - age, sex (biological)
+m2 <- svyglm(depepisode ~ as.factor(any_drug_ever_used_factor) + AGE3 + IRSEX, design = svy_analytic, family = quasibinomial)
+summary(m2)
+# print OR and 95% CI
+ci2 <- as.table(exp(cbind(OR = coef(m2), confint(m2))))
+logLik(m2)
+
+# Epoch 2 - race/ethnicity, education (social)
+m3 <- svyglm(depepisode ~ as.factor(any_drug_ever_used_factor) + AGE3 + IRSEX + NEWRACE2 + EDUSCHGRD2, design = svy_analytic, family = quasibinomial)
+summary(m3)
+# print OR and 95% CI
+ci3 <- as.table(exp(cbind(OR = coef(m3), confint(m3))))
+logLik(m3)
+
+# Epoch 3 - parent stuff (behavioral)
+m4 <- svyglm(depepisode ~ as.factor(any_drug_ever_used_factor) + AGE3 + IRSEX + NEWRACE2 + EDUSCHGRD2 +
+               as.factor(YEYARGUP) + as.factor(YEPPROUD) + as.factor(YEYFGTSW) + 
+               as.factor(YEPGDJOB), design = svy_analytic, family = quasibinomial)
+summary(m4)
+# print OR and 95% CI
+ci4 <- as.table(exp(cbind(OR = coef(m4), confint(m4))))
+logLik(m4)
+
+```
+
+#regression, any drug every used
+```{r}
+###check to see which confounders stay and which go
+
+########crude model adeu
+# 1. Define the Adjusted Logistic Regression Model
+m_adeucrude <- svyglm(depepisode ~ as.factor(any_drug_ever_used_factor), 
+                      design = svy_analytic, 
+                      family = quasibinomial)
+# 2. Get the model summary (Log-Odds)
+summary(m_adeucrude)
+# 3. Extract the Log-Odds Estimates (Coefficients)
+log_odds <- coef(m_adeucrude)
+# 4. Extract the 95% Confidence Intervals for the Log-Odds
+log_ci <- confint(m_adeucrude)
+# 5. Combine the estimates and CIs into a single matrix
+adeu_log <- cbind(
+    Log_Odds = log_odds,
+    Lower_CI = log_ci[, 1],
+    Upper_CI = log_ci[, 2]
+)
+# 6. Exponentiate the entire matrix to get the Odds Ratios and their 95% CIs
+adeu_OR_CI <- exp(adeu_log)
+# 7. Print the final table of Odds Ratios and CIs
+kable(adeu_OR_CI)
+
+#########biological model adeu
+m_adeubiological <- svyglm(
+    formula = depepisode ~ as.factor(any_drug_ever_used_factor) + AGE3 + IRSEX, 
+    design = svy_analytic, 
+    family = quasibinomial
+)
+summary(m_adeubiological)
+log_odds <- coef(m_adeubiological)
+log_ci <- confint(m_adeubiological)
+adeubio_log <- cbind(
+    Log_Odds = log_odds,
+    Lower_CI = log_ci[, 1],
+    Upper_CI = log_ci[, 2]
+)
+adeubio_OR_CI <- exp(adeubio_log)
+kable(adeubio_OR_CI)
+
+#########social model adeu
+m_adeusocial <- svyglm(depepisode ~ as.factor(any_drug_ever_used_factor), + AGE3 + IRSEX + NEWRACE2 + EDUSCHGRD2 + POVERTY3,
+                      design = svy_analytic, 
+                      family = quasibinomial,
+                      )
+summary(m_adeusocial)
+log_odds <- coef(m_adeusocial)
+log_ci <- confint(m_adeusocial)
+adeusoc_log <- cbind(
+    Log_Odds = log_odds,
+    Lower_CI = log_ci[, 1],
+    Upper_CI = log_ci[, 2]
+)
+adeusoc_OR_CI <- exp(adeusoc_log)
+kable(adeusoc_OR_CI)
+
+#########behavioral model adeu
+m_adeubeh <- svyglm(depepisode ~ as.factor(any_drug_ever_used_factor), + AGE3 + IRSEX, + NEWRACE2 + EDUSCHGRD2 + POVERTY3 + AVGGRADE + PARLMTSN + EDFAM18 + IMOTHER + IFATHER + YEYARGUP + YEPPROUD +
+    YEYFGTSW + YEPGDJOB + YESCHACT + YECOMACT,
+                      design = svy_analytic, 
+                      family = quasibinomial)
+summary(m_adeubeh)
+log_odds <- coef(m_adeubeh)
+log_ci <- confint(m_adeubeh)
+adeubeh_log <- cbind(
+    Log_Odds = log_odds,
+    Lower_CI = log_ci[, 1],
+    Upper_CI = log_ci[, 2]
+)
+adeubeh_OR_CI <- exp(adeubeh_log)
+kable(adeubeh_OR_CI)
+
+
+
+```
+
+# regression, soft drug ever used
+```{r}
+
+# 1. Define the Adjusted Logistic Regression Model
+m_sdeubiological <- svyglm(
+    formula = depepisode ~ as.factor(any_soft_drug_ever_used) + AGE3 + IRSEX, 
+    design = svy_analytic, 
+    family = quasibinomial
+)
+
+# 2. Get the model summary (Log-Odds)
+summary(m_sdeubiological)
+
+# --- Odds Ratio (OR) and 95% Confidence Interval (CI) Calculation ---
+
+# 3. Extract the Log-Odds Estimates (Coefficients)
+log_odds <- coef(m_sdeubiological)
+
+# 4. Extract the 95% Confidence Intervals for the Log-Odds
+#    The confint() function correctly accounts for the survey design
+log_ci <- confint(m_sdeubiological)
+
+# 5. Combine the estimates and CIs into a single matrix
+sdeu_log <- cbind(
+    Log_Odds = log_odds,
+    Lower_CI = log_ci[, 1],
+    Upper_CI = log_ci[, 2]
+)
+
+# 6. Exponentiate the entire matrix to get the Odds Ratios and their 95% CIs
+#    The exp() function converts Log-Odds to Odds Ratios
+sdeu_OR_CI <- exp(sdeu_log)
+
+# 7. Print the final table of Odds Ratios and CIs
+print(sdeu_OR_CI)
+
+```
+
+# Flip aim 1
+```{r}
+
+
+# CRUDE
+m1 <- svyglm(any_drug_ever_used_factor ~ as.factor(YMDELT_factor), design = svy_analytic, family = quasibinomial)
+summary(m1)
+# print OR and 95% CI
+ci1 <- as.table(exp(cbind(OR = coef(m1), confint(m1))))
+logLik(m1)
+
+# Epoch 1 - age, sex (biological)
+m2 <- svyglm(any_drug_ever_used_factor ~ as.factor(YMDELT_factor) + AGE3 + IRSEX, design = svy_analytic, family = quasibinomial)
+summary(m2)
+# print OR and 95% CI
+ci2 <- as.table(exp(cbind(OR = coef(m2), confint(m2))))
+logLik(m2)
+
+
+
+```
+
+
+
+
+```{R}
+
+# Function to fit and summarize weighted logistic regression
+fit_logistic <- function(exposure, confounders, design) {
+  formula <- as.formula(paste(outcome_var, "~", exposure, "+", paste(confounders, collapse = " + ")))
+  model <- svyglm(formula, design = design, family = quasibinomial())
+  tidy(model, conf.int = TRUE, exponentiate = TRUE)  # Odds ratios with CIs
+}
+
+# Fit models for each exposure
+models <- list()
+for (exp in all_exposures) {
+  cat("\n\n--- Logistic Regression for", exp, "vs. MDE ---\n")
+  models[[exp]] <- fit_logistic(exp, confounders_to_test, svy_analytic)
+  print(models[[exp]])
+}
+
+# Export model results
+for (exp in names(models)) {
+  write.csv(models[[exp]], paste0("logistic_", exp, "_results.csv"), row.names = FALSE)
+}
+```
+
+
+```
+
 
 ```{r debugging, eval=FALSE}
 # Debugging: Check for variables with only one level (run if errors occur)
@@ -224,3 +606,4 @@ for (var in check_vars) {
   print(table(youth_analytic[[var]], useNA = "ifany"))
 }
 ```
+
