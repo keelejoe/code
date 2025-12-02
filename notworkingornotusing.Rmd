@@ -1,0 +1,149 @@
+---
+title: "script that isnt working"
+output: html_document
+date: "2025-12-02"
+---
+
+
+# Regression - Aim 1 - SB version, ORs and CIs not printing
+```{r}
+
+# CRUDE
+m1 <- svyglm(depepisode ~ as.factor(any_drug_ever_used_factor), design = svy_analytic, family = quasibinomial)
+summary(m1)
+# print OR and 95% CI
+ci1 <- as.table(exp(cbind(OR = coef(m1), confint(m1))))
+logLik(m1)
+
+
+###################
+
+# Fit survey-weighted logistic regression
+m1 <- svyglm(depepisode ~ as.factor(any_drug_ever_used_factor),
+             design = svy_analytic,
+             family = quasibinomial())
+ 
+summary(m1)
+ 
+# ---- Odds Ratios and 95% CIs ----
+# Extract coefficients + CI on log-odds scale
+logit_ci <- confint(m1)
+ 
+# Convert to OR scale
+or_ci <- exp(cbind(OR = coef(m1), logit_ci))
+ 
+# Print nicely
+or_ci
+
+########################
+
+# Epoch 1 - age, sex (biological)
+m2 <- svyglm(depepisode ~ as.factor(any_drug_ever_used_factor) + AGE3 + IRSEX, design = svy_analytic, family = quasibinomial)
+summary(m2)
+# print OR and 95% CI
+ci2 <- as.table(exp(cbind(OR = coef(m2), confint(m2))))
+logLik(m2)
+
+# Epoch 2 - race/ethnicity, education (social)
+m3 <- svyglm(depepisode ~ as.factor(any_drug_ever_used_factor) + AGE3 + IRSEX + NEWRACE2 + EDUSCHGRD2, design = svy_analytic, family = quasibinomial)
+summary(m3)
+# print OR and 95% CI
+ci3 <- as.table(exp(cbind(OR = coef(m3), confint(m3))))
+logLik(m3)
+
+# Epoch 3 - parent stuff (behavioral)
+m4 <- svyglm(depepisode ~ as.factor(any_drug_ever_used_factor) + AGE3 + IRSEX + NEWRACE2 + EDUSCHGRD2 +
+               as.factor(YEYARGUP) + as.factor(YEPPROUD) + as.factor(YEYFGTSW) + 
+               as.factor(YEPGDJOB), design = svy_analytic, family = quasibinomial)
+summary(m4)
+# print OR and 95% CI
+ci4 <- as.table(exp(cbind(OR = coef(m4), confint(m4))))
+logLik(m4)
+
+```
+
+
+# Confounder check - any drug
+####not working right
+```{r confounder_tests}
+# Define variables for testing
+outcome_var <- "YMDELT_factor"
+exposure_var <- "any_drug_ever_used_factor"
+confounders_to_test <- c("AGE3", "IRSEX", "NEWRACE2", "EDUSCHGRD2", 
+                         "POVERTY3", "AVGGRADE", "PARLMTSN",
+                         "EDFAM18", "IMOTHER",    "IFATHER",    "YEYARGUP",
+                         "YEPPROUD",   "YEYFGTSW",   "YEPGDJOB",  "YESCHACT", "YECOMACT" )
+
+
+
+# Function to safely run svychisq and handle errors
+safe_svychisq <- function(formula, design) {
+  tryCatch({
+    svychisq(formula, design = design)
+  }, error = function(e) {
+    message("Error in svychisq for ", deparse(formula), ": ", e$message)
+    return(NULL)
+  })
+}
+
+# Test confounders vs. outcome
+cat("--- Confounder vs. Outcome (Depression) Tests ---\n")
+conf_outcome_tests <- lapply(confounders_to_test, function(conf) {
+  formula <- as.formula(paste("~", conf, "+", outcome_var))
+  safe_svychisq(formula, svy_analytic)
+})
+names(conf_outcome_tests) <- confounders_to_test
+print(conf_outcome_tests)
+
+# Test confounders vs. exposure
+cat("\n\n--- Confounder vs. Exposure (Drug Use) Tests ---\n")
+conf_exposure_tests <- lapply(confounders_to_test, function(conf) {
+  formula <- as.formula(paste("~", conf, "+", exposure_var))
+  safe_svychisq(formula, svy_analytic)
+})
+names(conf_exposure_tests) <- confounders_to_test
+print(conf_exposure_tests)
+```
+
+# Flip aim 1
+```{r}
+
+# CRUDE
+m1 <- svyglm(any_drug_ever_used_factor ~ as.factor(YMDELT_factor), design = svy_analytic, family = quasibinomial)
+summary(m1)
+# print OR and 95% CI
+ci1 <- as.table(exp(cbind(OR = coef(m1), confint(m1))))
+logLik(m1)
+
+# Epoch 1 - age, sex (biological)
+m2 <- svyglm(any_drug_ever_used_factor ~ as.factor(YMDELT_factor) + AGE3 + IRSEX, design = svy_analytic, family = quasibinomial)
+summary(m2)
+# print OR and 95% CI
+ci2 <- as.table(exp(cbind(OR = coef(m2), confint(m2))))
+logLik(m2)
+
+```
+
+
+```{R}
+
+# Function to fit and summarize weighted logistic regression
+fit_logistic <- function(exposure, confounders, design) {
+  formula <- as.formula(paste(outcome_var, "~", exposure, "+", paste(confounders, collapse = " + ")))
+  model <- svyglm(formula, design = design, family = quasibinomial())
+  tidy(model, conf.int = TRUE, exponentiate = TRUE)  # Odds ratios with CIs
+}
+
+# Fit models for each exposure
+models <- list()
+for (exp in all_exposures) {
+  cat("\n\n--- Logistic Regression for", exp, "vs. MDE ---\n")
+  models[[exp]] <- fit_logistic(exp, confounders_to_test, svy_analytic)
+  print(models[[exp]])
+}
+
+# Export model results
+for (exp in names(models)) {
+  write.csv(models[[exp]], paste0("logistic_", exp, "_results.csv"), row.names = FALSE)
+}
+```
