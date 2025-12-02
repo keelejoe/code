@@ -473,6 +473,9 @@ adeu_OR_CI <- exp(adeu_log)
 # 7. Print the final table of Odds Ratios and CIs
 kable(adeu_OR_CI)
 
+tbl_regression(m_adeucrude, exponentiate = TRUE) %>%
+  bold_p()
+
 #########biological model adeu
 m_adeubiological <- svyglm(
     formula = depepisode ~ as.factor(any_drug_ever_used_factor) + AGE3 + IRSEX, 
@@ -489,6 +492,9 @@ adeubio_log <- cbind(
 )
 adeubio_OR_CI <- exp(adeubio_log)
 kable(adeubio_OR_CI)
+
+tbl_regression(m_adeubiological, exponentiate = TRUE) %>%
+  bold_p()
 
 #########social model adeu
 m_adeusocial <- svyglm(depepisode ~ as.factor(any_drug_ever_used_factor) + # No comma here
@@ -511,6 +517,9 @@ adeusoc_log <- cbind(
 )
 adeusoc_OR_CI <- exp(adeusoc_log)
 kable(adeusoc_OR_CI)
+
+tbl_regression(m_adeusocial, exponentiate = TRUE) %>%
+  bold_p()
 
 #########behavioral model adeu
 m_adeubeh <- svyglm(depepisode ~ as.factor(any_drug_ever_used_factor) + # No comma here
@@ -544,6 +553,8 @@ adeubeh_log <- cbind(
 adeubeh_OR_CI <- exp(adeubeh_log)
 kable(adeubeh_OR_CI)
 
+tbl_regression(m_adeubeh, exponentiate = TRUE) %>%
+  bold_p()
 
 
 ```
@@ -573,6 +584,9 @@ sdeu_OR_CI <- exp(sdeu_log)
 # 7. Print the final table of Odds Ratios and CIs
 kable(sdeu_OR_CI)
 
+tbl_regression(m_sdeucrude, exponentiate = TRUE) %>%
+  bold_p()
+
 #########biological model sdeu
 m_sdeubiological <- svyglm(
     formula = depepisode ~ as.factor(any_soft_drug_ever_used_factor) + 
@@ -591,6 +605,9 @@ sdeubio_log <- cbind(
 )
 sdeubio_OR_CI <- exp(sdeubio_log)
 kable(sdeubio_OR_CI)
+
+tbl_regression(m_sdeubiological, exponentiate = TRUE) %>%
+  bold_p()
 
 #########social model sdeu
 m_sdeusocial <- svyglm(depepisode ~ as.factor(any_soft_drug_ever_used_factor) + 
@@ -614,6 +631,9 @@ sdeusoc_log <- cbind(
 )
 sdeusoc_OR_CI <- exp(sdeusoc_log)
 kable(sdeusoc_OR_CI)
+
+tbl_regression(m_sdeusocial, exponentiate = TRUE) %>%
+  bold_p()
 
 #########behavioral model sdeu
 m_sdeubeh <- svyglm(depepisode ~ as.factor(any_soft_drug_ever_used_factor) + 
@@ -647,6 +667,8 @@ sdeubeh_log <- cbind(
 sdeubeh_OR_CI <- exp(sdeubeh_log)
 kable(sdeubeh_OR_CI)
 
+tbl_regression(m_sdeubeh, exponentiate = TRUE) %>%
+  bold_p()
 
 ```
 
@@ -675,6 +697,9 @@ hdeu_OR_CI <- exp(hdeu_log)
 # 7. Print the final table of Odds Ratios and CIs
 kable(hdeu_OR_CI)
 
+tbl_regression(m_hdeucrude, exponentiate = TRUE) %>%
+  bold_p()
+
 #########biological model hdeu
 m_hdeubiological <- svyglm(
     formula = depepisode ~ as.factor(any_hard_drug_ever_used_factor) + 
@@ -693,6 +718,9 @@ hdeubio_log <- cbind(
 )
 hdeubio_OR_CI <- exp(hdeubio_log)
 kable(hdeubio_OR_CI)
+
+tbl_regression(m_hdeubiological, exponentiate = TRUE) %>%
+  bold_p()
 
 #########social model hdeu
 m_hdeusocial <- svyglm(depepisode ~ as.factor(any_hard_drug_ever_used_factor) + 
@@ -714,6 +742,9 @@ hdeusoc_log <- cbind(
 )
 hdeusoc_OR_CI <- exp(hdeusoc_log)
 kable(hdeusoc_OR_CI)
+
+tbl_regression(m_hdeusocial, exponentiate = TRUE) %>%
+  bold_p()
 
 #########behavioral model hdeu
 m_hdeubeh <- svyglm(depepisode ~ as.factor(any_hard_drug_ever_used_factor) + 
@@ -746,6 +777,8 @@ hdeubeh_log <- cbind(
 hdeubeh_OR_CI <- exp(hdeubeh_log)
 kable(hdeubeh_OR_CI)
 
+tbl_regression(m_hdeubeh, exponentiate = TRUE) %>%
+  bold_p()
 
 ```
 
