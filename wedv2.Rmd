@@ -782,6 +782,138 @@ tbl_regression(m_hdeubeh, exponentiate = TRUE) %>%
 
 ```
 
+# Overall Prevalence of outcome in analytic sample
+```{r}
+
+weighted_counts <- svytable(~ depepisode, svy_analytic)
+svyprop <- svymean(~factor(depepisode), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+```
+
+# Overall drug use behavior in analytic sample 
+```{r}
+
+# Overall 
+weighted_counts <- svytable(~ any_drug_ever_used_factor, svy_analytic)
+svyprop <- svymean(~factor(any_drug_ever_used_factor), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+# Each drug (so we can see what drives this estimate - e.g., mainly alcohol and marijuana maybe)
+
+#SOFT DRUGS
+#ALCOHOL
+weighted_counts <- svytable(~ ALCFLAG, svy_analytic)
+svyprop <- svymean(~factor(ALCFLAG), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+#CIGS
+weighted_counts <- svytable(~ CIGFLAG, svy_analytic)
+svyprop <- svymean(~factor(CIGFLAG), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+#MARIJUANA
+weighted_counts <- svytable(~ MRJFLAG, svy_analytic)
+svyprop <- svymean(~factor(MRJFLAG), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+#CIGAR
+weighted_counts <- svytable(~ CGRFLAG, svy_analytic)
+svyprop <- svymean(~factor(CGRFLAG), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+#PIPE
+weighted_counts <- svytable(~ PIPFLAG, svy_analytic)
+svyprop <- svymean(~factor(PIPFLAG), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+#SMOKELESS
+weighted_counts <- svytable(~ SMKLSSFLAG, svy_analytic)
+svyprop <- svymean(~factor(SMKLSSFLAG), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+#NIC VAPES
+weighted_counts <- svytable(~ NICVAPFLAG, svy_analytic)
+svyprop <- svymean(~factor(NICVAPFLAG), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+#CBD/HEMP
+weighted_counts <- svytable(~ CBDHMPFLAG, svy_analytic)
+svyprop <- svymean(~factor(CBDHMPFLAG), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+#HARD DRUGS
+#COCAINE
+weighted_counts <- svytable(~ COCFLAG, svy_analytic)
+svyprop <- svymean(~factor(COCFLAG), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+#CRACK
+weighted_counts <- svytable(~ CRKFLAG, svy_analytic)
+svyprop <- svymean(~factor(CRKFLAG), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+#HEROIN
+weighted_counts <- svytable(~ HERFLAG, svy_analytic)
+svyprop <- svymean(~factor(HERFLAG), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+#METH
+weighted_counts <- svytable(~ METHAMFLAG, svy_analytic)
+svyprop <- svymean(~factor(METHAMFLAG), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+#HALLUCINOGENS
+weighted_counts <- svytable(~ HALLUCFLAG, svy_analytic)
+svyprop <- svymean(~factor(HALLUCFLAG), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+#INHALANTS
+weighted_counts <- svytable(~ INHALFLAG, svy_analytic)
+svyprop <- svymean(~factor(INHALFLAG), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+#PAIN RELIEVERS
+weighted_counts <- svytable(~ PNRANYFLAG, svy_analytic)
+svyprop <- svymean(~factor(PNRANYFLAG), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+#TRANQS
+weighted_counts <- svytable(~ TRQANYFLAG, svy_analytic)
+svyprop <- svymean(~factor(TRQANYFLAG), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+#STIMULANTS
+weighted_counts <- svytable(~ STMANYFLAG, svy_analytic)
+svyprop <- svymean(~factor(STMANYFLAG), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+#SEDATIVES
+weighted_counts <- svytable(~ SEDANYFLAG, svy_analytic)
+svyprop <- svymean(~factor(SEDANYFLAG), design = svy_analytic)
+svyprop
+confint(svyprop)
+```
+
 
 #debugging
 ```{r debugging, eval=FALSE}
