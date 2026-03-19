@@ -29,8 +29,10 @@ load("NSDUH_2023.Rdata")
 d <- data
 ```
 
-#data prep
+#data prep and cleaning
+
 ```{r data_preparation}
+
 # Select relevant variables
 s <- d %>%
   select(
@@ -120,24 +122,45 @@ youth_analytic <- s_clean %>%
                    levels = c(1, 2), 
                    labels = c("Male", "Female")),
     
+    # Factor any, soft and hard ever used
     any_drug_ever_used_factor = factor(any_drug_ever_used, 
                                        levels = c(0, 1), 
                                        labels = c("Never Used", "Ever Used")),
     
     any_soft_drug_ever_used_factor = factor(any_soft_drug_ever_used, 
-                                       levels = c(0, 1), 
-                                       labels = c("Never Used", "Ever Used")),
-     
+                                            levels = c(0, 1), 
+                                            labels = c("Never Used", "Ever Used")),
+    
     any_hard_drug_ever_used_factor = factor(any_hard_drug_ever_used, 
-                                      levels = c(0, 1), 
-                                      labels = c("Never Used", "Ever Used"))
-      
+                                            levels = c(0, 1), 
+                                            labels = c("Never Used", "Ever Used"))
+  ) %>%
+  
+  # Exclude unknowns/don't knows from EDUSCHGRD2 (set to NA if 98 or 99, then filter out)
+  mutate(
+    EDUSCHGRD2 = ifelse(EDUSCHGRD2 %in% c(98, 99), NA, EDUSCHGRD2)
+  ) %>%
+  filter(!is.na(EDUSCHGRD2)) %>%  # Explicitly filter out NA (unknowns) for counts
+  
+  # Factor education, race and mde
+  mutate(
+    EDUSCHGRD2 = as.factor(EDUSCHGRD2),
+    NEWRACE2   = as.factor(NEWRACE2)
+  ) %>%
+  
+  mutate(
+    depepisode = ifelse(YMDELT_factor == "Yes", 1, 0)
   ) %>%
   
   # List-wise deletion: remove NAs in outcome, exposure, and confounders
   drop_na(YMDELT_factor, any_drug_ever_used_factor, all_of(confounder_vars))
 
-# Check sample sizes and distributions (unweighted)
+# Report dropped rows
+original_rows <- nrow(s_clean %>% filter(AGE3 %in% c(1, 2, 3)))
+final_rows <- nrow(youth_analytic)
+cat("Dropped", original_rows - final_rows, "rows due to NAs (out of", original_rows, "youth rows).\n")
+
+# Check sample sizes and distributions (unweighted) - unknowns excluded
 cat("--- Unweighted Age Distribution ---\n")
 print(freq(youth_analytic$AGE3))
 
@@ -147,25 +170,10 @@ print(freq(youth_analytic$any_drug_ever_used_factor))
 cat("\n--- Unweighted Depression Outcome Distribution ---\n")
 print(freq(youth_analytic$YMDELT_factor))
 
-
-
-youth_analytic <- youth_analytic %>% 
-  mutate(
-    EDUSCHGRD2 = ifelse(EDUSCHGRD2>10, NA, EDUSCHGRD2))
-
-youth_analytic <- youth_analytic %>% 
-  mutate(
-    EDUSCHGRD2 = as.factor(EDUSCHGRD2),
-    NEWRACE2   = as.factor(NEWRACE2))
-
-youth_analytic <- youth_analytic %>% 
-  mutate(
-    depepisode = ifelse(YMDELT_factor=="Yes", 1, 0)
-  )
 ```
 
-
 #survey design
+
 ```{r survey_design}
 # Create survey design object
 svy_analytic <- svydesign(
@@ -181,7 +189,9 @@ print(svy_analytic)
 ```
 
 # unweighted counts & percents
+
 ```{r table1}
+
 # Define variable labels
 var_labels <- list(
   AGE3 ~ "Age Group",
@@ -190,28 +200,31 @@ var_labels <- list(
   EDUSCHGRD2 ~ "Education",
   POVERTY3 ~ "Poverty Level",
   AVGGRADE ~ "Average Grades",
-  PARLMTSN ~ "Parental Monitoring")
+  PARLMTSN ~ "Parental Monitoring"
+)
 
 # Generate unweighted Table 1 
-table1 <- svy_analytic %>%
-  tbl_svysummary(
+tbl1 <- youth_analytic %>%
+  tbl_summary(
     include = c(AGE3, IRSEX, NEWRACE2, EDUSCHGRD2, POVERTY3, AVGGRADE, 
                 PARLMTSN),
     label = var_labels,
-    statistic = list(all_categorical() ~ "{n_unweighted} ({p}%)")
+    statistic = list(all_categorical() ~ "{n} ({p}%)")
   ) %>%
   add_overall(
-    col_label = "**Overall (N = {N_unweighted})**",
-    statistic = list(all_categorical() ~ "{n_unweighted} ({p}%)")
-  ) %>%
-  modify_header(label = "**Characteristic**") %>%
+    col_label = "**Overall (N = {N})**",
+    statistic = list(all_categorical() ~ "{n} ({p}%)")
+  )
 
-# Display the table
-table1
+# Display the table (prints directly in RMarkdown)
+tbl1
+
+# Export table to CSV
+write.csv(tbl1$table_body, "table1_unweighted.csv", row.names = FALSE)
 
 ```
 
-# Weighted counts, percents, CIs
+# SB method: Weighted counts, percents, CIs
 ```{r}
 
 # Weighted counts
@@ -368,7 +381,277 @@ tbl
 
 ```
 
-## Check confounding - this works
+# Weighted counts, percents, CIs
+
+```{r combined_weighted_table}
+# List of variables to include in the combined table
+variables <- c("AGE3", "IRSEX", "NEWRACE2", "EDUSCHGRD2", "POVERTY3", "AVGGRADE", "PARLMTSN")
+
+# Function to compute weighted counts, proportions, and CIs for each variable
+compute_weighted_table <- function(var, design) {
+  # Weighted counts
+  weighted_counts <- svytable(as.formula(paste("~", var)), design)
+  
+  # Weighted proportions
+  svyprop <- svymean(as.formula(paste("~factor(", var, ")")), design = design)
+  
+  # Combine into data.frame
+  data.frame(
+    Variable = var,
+    Category = names(weighted_counts),
+    Weighted_Count = as.numeric(weighted_counts),
+    Proportion = coef(svyprop),
+    CI_Lower = confint(svyprop)[, 1],
+    CI_Upper = confint(svyprop)[, 2]
+  )
+}
+
+# Compute tables for all variables
+all_tbls <- lapply(variables, compute_weighted_table, design = svy_analytic)
+
+# Combine all tables into one
+combined_tbl <- bind_rows(all_tbls)
+
+# Display the combined table
+combined_tbl
+
+# Export to CSV
+write.csv(combined_tbl, "weighted_table1.csv", row.names = FALSE)
+```
+
+# Confounder check - any drug
+
+```{r confounder_tests}
+# Define variables for testing
+outcome_var <- "depepisode"
+exposure_var <- "any_drug_ever_used_factor"
+confounders_to_test <- c("AGE3", "IRSEX", "NEWRACE2", "EDUSCHGRD2", 
+                         "POVERTY3", "AVGGRADE", "PARLMTSN",
+                         "EDFAM18", "IMOTHER",    "IFATHER",    "YEYARGUP",
+                         "YEPPROUD",   "YEYFGTSW",   "YEPGDJOB",  "YESCHACT", "YECOMACT" )
+
+
+
+# Function to safely run svychisq and handle errors
+safe_svychisq <- function(formula, design) {
+  tryCatch({
+    svychisq(formula, design = design)
+  }, error = function(e) {
+    message("Error in svychisq for ", deparse(formula), ": ", e$message)
+    return(NULL)
+  })
+}
+
+# Test confounders vs. outcome
+cat("--- Confounder vs. Outcome (Depression) Tests ---\n")
+conf_outcome_tests <- lapply(confounders_to_test, function(conf) {
+  formula <- as.formula(paste("~", conf, "+", outcome_var))
+  safe_svychisq(formula, svy_analytic)
+})
+names(conf_outcome_tests) <- confounders_to_test
+print(conf_outcome_tests)
+
+# Test confounders vs. exposure
+cat("\n\n--- Confounder vs. Exposure (Drug Use) Tests ---\n")
+conf_exposure_tests <- lapply(confounders_to_test, function(conf) {
+  formula <- as.formula(paste("~", conf, "+", exposure_var))
+  safe_svychisq(formula, svy_analytic)
+})
+names(conf_exposure_tests) <- confounders_to_test
+print(conf_exposure_tests)
+```
+
+##testing new confounder code
+```{r confounder_tests}
+# Define variables for testing
+outcome_var <- "depepisode"
+exposure_var <- "any_drug_ever_used_factor"
+confounders_to_test <- c("AGE3", "IRSEX", "NEWRACE2", "EDUSCHGRD2", 
+                         "POVERTY3", "AVGGRADE", "PARLMTSN",
+                         "EDFAM18", "IMOTHER", "IFATHER", "YEYARGUP",
+                         "YEPPROUD", "YEYFGTSW", "YEPGDJOB", "YESCHACT", "YECOMACT")
+
+# Function to safely run svychisq and handle errors
+safe_svychisq <- function(formula, design) {
+  tryCatch({
+    svychisq(formula, design = design)
+  }, error = function(e) {
+    message("Error in svychisq for ", deparse(formula), ": ", e$message)
+    return(NULL)
+  })
+}
+
+# Function to extract results from svychisq objects
+extract_chi_sq_results <- function(test_obj, confounder, level, type) {
+  if (is.null(test_obj)) {
+    return(NULL)
+  }
+  data.frame(
+    Confounder = confounder,
+    Level = as.character(level),  # Convert level to character to avoid type mismatch
+    Type = type,
+    Chi2 = test_obj$statistic,
+    df = test_obj$parameter,
+    p.value = test_obj$p.value
+  )
+}
+
+# Initialize empty list for results
+all_results <- list()
+
+# First, add overall tests
+cat("--- Overall Confounder vs. Outcome (Depression) Tests ---\n")
+conf_outcome_tests <- lapply(confounders_to_test, function(conf) {
+  formula <- as.formula(paste("~", conf, "+", outcome_var))
+  safe_svychisq(formula, svy_analytic)
+})
+names(conf_outcome_tests) <- confounders_to_test
+
+cat("\n\n--- Overall Confounder vs. Exposure (Drug Use) Tests ---\n")
+conf_exposure_tests <- lapply(confounders_to_test, function(conf) {
+  formula <- as.formula(paste("~", conf, "+", exposure_var))
+  safe_svychisq(formula, svy_analytic)
+})
+names(conf_exposure_tests) <- confounders_to_test
+
+# Extract overall results
+for (conf in confounders_to_test) {
+  outcome_test <- conf_outcome_tests[[conf]]
+  exposure_test <- conf_exposure_tests[[conf]]
+  
+  if (!is.null(outcome_test)) {
+    result <- extract_chi_sq_results(outcome_test, conf, "Overall", "vs Outcome (Depression)")
+    all_results <- c(all_results, list(result))
+  }
+  
+  if (!is.null(exposure_test)) {
+    result <- extract_chi_sq_results(exposure_test, conf, "Overall", "vs Exposure (Drug Use)")
+    all_results <- c(all_results, list(result))
+  }
+}
+
+# Now, per-level tests for exposure vs outcome
+for (conf in confounders_to_test) {
+  # Get unique levels of the confounder in the data
+  levels_conf <- unique(youth_analytic[[conf]])
+  levels_conf <- levels_conf[!is.na(levels_conf)]  # Exclude NA if any
+  
+  # For each level of the confounder
+  for (lvl in levels_conf) {
+    # Subset the survey design to this level
+    subset_design <- subset(svy_analytic, youth_analytic[[conf]] == lvl)
+    
+    # Check if subset has data
+    if (nrow(subset_design$variables) == 0) next
+    
+    # Test exposure vs outcome in this subset
+    formula <- as.formula(paste("~", exposure_var, "+", outcome_var))
+    test_result <- safe_svychisq(formula, subset_design)
+    
+    # Extract results
+    result <- extract_chi_sq_results(test_result, conf, lvl, "Exposure vs Outcome (within level)")
+    if (!is.null(result)) {
+      all_results <- c(all_results, list(result))
+    }
+  }
+}
+
+# Combine all results into one data.frame
+all_chi_sq_results <- bind_rows(all_results)
+
+# Display the combined chi-square table
+all_chi_sq_results
+
+# Export to CSV
+write.csv(all_chi_sq_results, "chi_square_tests_complete.csv", row.names = FALSE)
+```
+
+
+# confounder check - soft drugs
+```{r confounder_tests}
+# Define variables for testing
+outcome_var <- "depepisode"
+exposure_var <- "any_soft_drug_ever_used_factor"
+confounders_to_test <- c("AGE3", "IRSEX", "NEWRACE2", "EDUSCHGRD2", 
+                         "POVERTY3", "AVGGRADE", "PARLMTSN",
+                         "EDFAM18", "IMOTHER",    "IFATHER",    "YEYARGUP",
+                         "YEPPROUD",   "YEYFGTSW",   "YEPGDJOB",  "YESCHACT", "YECOMACT" )
+
+
+
+# Function to safely run svychisq and handle errors
+safe_svychisq <- function(formula, design) {
+  tryCatch({
+    svychisq(formula, design = design)
+  }, error = function(e) {
+    message("Error in svychisq for ", deparse(formula), ": ", e$message)
+    return(NULL)
+  })
+}
+
+# Test confounders vs. outcome
+cat("--- Confounder vs. Outcome (Depression) Tests ---\n")
+conf_outcome_tests <- lapply(confounders_to_test, function(conf) {
+  formula <- as.formula(paste("~", conf, "+", outcome_var))
+  safe_svychisq(formula, svy_analytic)
+})
+names(conf_outcome_tests) <- confounders_to_test
+print(conf_outcome_tests)
+
+# Test confounders vs. exposure
+cat("\n\n--- Confounder vs. Exposure (Drug Use) Tests ---\n")
+conf_exposure_tests <- lapply(confounders_to_test, function(conf) {
+  formula <- as.formula(paste("~", conf, "+", exposure_var))
+  safe_svychisq(formula, svy_analytic)
+})
+names(conf_exposure_tests) <- confounders_to_test
+print(conf_exposure_tests)
+```
+
+#confounder check - hard drugs
+
+```{r confounder_tests}
+# Define variables for testing
+outcome_var <- "depepisode"
+exposure_var <- "any_hard_drug_ever_used_factor"
+confounders_to_test <- c("AGE3", "IRSEX", "NEWRACE2", "EDUSCHGRD2", 
+                         "POVERTY3", "AVGGRADE", "PARLMTSN",
+                         "EDFAM18", "IMOTHER",    "IFATHER",    "YEYARGUP",
+                         "YEPPROUD",   "YEYFGTSW",   "YEPGDJOB",  "YESCHACT", "YECOMACT" )
+
+
+
+# Function to safely run svychisq and handle errors
+safe_svychisq <- function(formula, design) {
+  tryCatch({
+    svychisq(formula, design = design)
+  }, error = function(e) {
+    message("Error in svychisq for ", deparse(formula), ": ", e$message)
+    return(NULL)
+  })
+}
+
+# Test confounders vs. outcome
+cat("--- Confounder vs. Outcome (Depression) Tests ---\n")
+conf_outcome_tests <- lapply(confounders_to_test, function(conf) {
+  formula <- as.formula(paste("~", conf, "+", outcome_var))
+  safe_svychisq(formula, svy_analytic)
+})
+names(conf_outcome_tests) <- confounders_to_test
+print(conf_outcome_tests)
+
+# Test confounders vs. exposure
+cat("\n\n--- Confounder vs. Exposure (Drug Use) Tests ---\n")
+conf_exposure_tests <- lapply(confounders_to_test, function(conf) {
+  formula <- as.formula(paste("~", conf, "+", exposure_var))
+  safe_svychisq(formula, svy_analytic)
+})
+names(conf_exposure_tests) <- confounders_to_test
+print(conf_exposure_tests)
+```
+
+# Regression - Aim 1 - SB version, ORs and CIs not printing
+
 ```{r}
 # Check candidate confounder with OUTCOME
 svychisq(~depepisode + AGE3, design = svy_analytic, statistic = "Chisq")

@@ -1,0 +1,37 @@
+"variable","var_type","var_label","row_type","label","stat_0"
+"AGE3","categorical","Age Group","label","Age Group",NA
+"AGE3","categorical","Age Group","level","12-13","2,468 (29%)"
+"AGE3","categorical","Age Group","level","14-15","3,054 (36%)"
+"AGE3","categorical","Age Group","level","16-17","2,905 (34%)"
+"IRSEX","categorical","Sex","label","Sex",NA
+"IRSEX","categorical","Sex","level","Male","4,250 (50%)"
+"IRSEX","categorical","Sex","level","Female","4,177 (50%)"
+"NEWRACE2","categorical","Race/Ethnicity","label","Race/Ethnicity",NA
+"NEWRACE2","categorical","Race/Ethnicity","level","1","3,765 (45%)"
+"NEWRACE2","categorical","Race/Ethnicity","level","2","1,060 (13%)"
+"NEWRACE2","categorical","Race/Ethnicity","level","3","263 (3.1%)"
+"NEWRACE2","categorical","Race/Ethnicity","level","4","36 (0.4%)"
+"NEWRACE2","categorical","Race/Ethnicity","level","5","421 (5.0%)"
+"NEWRACE2","categorical","Race/Ethnicity","level","6","641 (7.6%)"
+"NEWRACE2","categorical","Race/Ethnicity","level","7","2,241 (27%)"
+"EDUSCHGRD2","categorical","Education","label","Education",NA
+"EDUSCHGRD2","categorical","Education","level","1","17 (0.2%)"
+"EDUSCHGRD2","categorical","Education","level","2","367 (4.4%)"
+"EDUSCHGRD2","categorical","Education","level","3","1,158 (14%)"
+"EDUSCHGRD2","categorical","Education","level","4","1,375 (16%)"
+"EDUSCHGRD2","categorical","Education","level","5","1,538 (18%)"
+"EDUSCHGRD2","categorical","Education","level","6","1,552 (18%)"
+"EDUSCHGRD2","categorical","Education","level","7","1,500 (18%)"
+"EDUSCHGRD2","categorical","Education","level","8","856 (10%)"
+"EDUSCHGRD2","categorical","Education","level","9","61 (0.7%)"
+"EDUSCHGRD2","categorical","Education","level","10","3 (<0.1%)"
+"POVERTY3","categorical","Poverty Level","label","Poverty Level",NA
+"POVERTY3","categorical","Poverty Level","level","1","1,933 (23%)"
+"POVERTY3","categorical","Poverty Level","level","2","1,782 (21%)"
+"POVERTY3","categorical","Poverty Level","level","3","4,712 (56%)"
+"AVGGRADE","categorical","Average Grades","label","Average Grades",NA
+"AVGGRADE","categorical","Average Grades","level","1","475 (5.6%)"
+"AVGGRADE","categorical","Average Grades","level","2","7,952 (94%)"
+"PARLMTSN","categorical","Parental Monitoring","label","Parental Monitoring",NA
+"PARLMTSN","categorical","Parental Monitoring","level","1","4,874 (58%)"
+"PARLMTSN","categorical","Parental Monitoring","level","2","3,553 (42%)"
