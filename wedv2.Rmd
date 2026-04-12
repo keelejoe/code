@@ -496,13 +496,38 @@ kable(adeubio_OR_CI)
 tbl_regression(m_adeubiological, exponentiate = TRUE) %>%
   bold_p()
 
+#keep age and sex
+
 #########social model adeu
 m_adeusocial <- svyglm(depepisode ~ as.factor(any_drug_ever_used_factor) + # No comma here
                          AGE3 + 
                          IRSEX + 
                          NEWRACE2 + 
-                         EDUSCHGRD2 + 
-                         POVERTY3,
+                         EDUSCHGRD2,
+                      design = svy_analytic, 
+                      family = quasibinomial,
+                      na.action = na.omit         #added to exclude edu na's
+                      )
+summary(m_adeusocial)
+log_odds <- coef(m_adeusocial)
+log_ci <- confint(m_adeusocial)
+adeusoc_log <- cbind(
+    Log_Odds = log_odds,
+    Lower_CI = log_ci[, 1],
+    Upper_CI = log_ci[, 2]
+)
+adeusoc_OR_CI <- exp(adeusoc_log)
+kable(adeusoc_OR_CI)
+
+tbl_regression(m_adeusocial, exponentiate = TRUE) %>%
+  bold_p()
+
+#keep race and education
+m_adeusocial <- svyglm(depepisode ~ as.factor(any_drug_ever_used_factor) + # No comma here
+                         AGE3 + 
+                         IRSEX + 
+                         NEWRACE2 + 
+                         EDUSCHGRD2,
                       design = svy_analytic, 
                       family = quasibinomial,
                       na.action = na.omit         #added to exclude edu na's
@@ -527,17 +552,10 @@ m_adeubeh <- svyglm(depepisode ~ as.factor(any_drug_ever_used_factor) + # No com
                       IRSEX + 
                       NEWRACE2 + 
                       EDUSCHGRD2 + 
-                      AVGGRADE + 
-                      PARLMTSN + 
-                      EDFAM18 + 
-                      IMOTHER + 
-                      IFATHER + 
                       YEYARGUP + 
                       YEPPROUD +
                       YEYFGTSW + 
-                      YEPGDJOB + 
-                      YESCHACT + 
-                      YECOMACT,
+                      YEPGDJOB,
                       design = svy_analytic, 
                       family = quasibinomial,
                       na.action = na.omit         #added to exclude edu na's
@@ -556,6 +574,30 @@ kable(adeubeh_OR_CI)
 tbl_regression(m_adeubeh, exponentiate = TRUE) %>%
   bold_p()
 
+#keep yeyargu
+m_adeubeh <- svyglm(depepisode ~ as.factor(any_drug_ever_used_factor) + # No comma here
+                      AGE3 + 
+                      IRSEX + 
+                      NEWRACE2 + 
+                      EDUSCHGRD2 +
+                      YEYARGUP,
+                      design = svy_analytic, 
+                      family = quasibinomial,
+                      na.action = na.omit         #added to exclude edu na's
+                      )
+summary(m_adeubeh)
+log_odds <- coef(m_adeubeh)
+log_ci <- confint(m_adeubeh)
+adeubeh_log <- cbind(
+    Log_Odds = log_odds,
+    Lower_CI = log_ci[, 1],
+    Upper_CI = log_ci[, 2]
+)
+adeubeh_OR_CI <- exp(adeubeh_log)
+kable(adeubeh_OR_CI)
+
+tbl_regression(m_adeubeh, exponentiate = TRUE) %>%
+  bold_p()
 
 ```
 
@@ -614,8 +656,32 @@ m_sdeusocial <- svyglm(depepisode ~ as.factor(any_soft_drug_ever_used_factor) +
                          AGE3 + 
                          IRSEX + 
                          NEWRACE2 + 
-                         EDUSCHGRD2 + 
-                         POVERTY3,
+                         EDUSCHGRD2,
+                      design = svy_analytic, 
+                      family = quasibinomial,
+                      na.action = na.omit         #added to exclude edu na's
+
+                      )
+summary(m_sdeusocial)
+log_odds <- coef(m_sdeusocial)
+log_ci <- confint(m_sdeusocial)
+sdeusoc_log <- cbind(
+    Log_Odds = log_odds,
+    Lower_CI = log_ci[, 1],
+    Upper_CI = log_ci[, 2]
+)
+sdeusoc_OR_CI <- exp(sdeusoc_log)
+kable(sdeusoc_OR_CI)
+
+tbl_regression(m_sdeusocial, exponentiate = TRUE) %>%
+  bold_p()
+
+#keep race and edu
+m_sdeusocial <- svyglm(depepisode ~ as.factor(any_soft_drug_ever_used_factor) + 
+                         AGE3 + 
+                         IRSEX + 
+                         NEWRACE2 + 
+                         EDUSCHGRD2,
                       design = svy_analytic, 
                       family = quasibinomial,
                       na.action = na.omit         #added to exclude edu na's
@@ -641,17 +707,10 @@ m_sdeubeh <- svyglm(depepisode ~ as.factor(any_soft_drug_ever_used_factor) +
                       IRSEX + 
                       NEWRACE2 + 
                       EDUSCHGRD2 + 
-                      AVGGRADE + 
-                      PARLMTSN + 
-                      EDFAM18 + 
-                      IMOTHER + 
-                      IFATHER + 
                       YEYARGUP + 
                       YEPPROUD +
                       YEYFGTSW + 
-                      YEPGDJOB + 
-                      YESCHACT + 
-                      YECOMACT,
+                      YEPGDJOB,
                       design = svy_analytic, 
                       family = quasibinomial,
                       na.action = na.omit         #added to exclude edu na's
@@ -670,6 +729,30 @@ kable(sdeubeh_OR_CI)
 tbl_regression(m_sdeubeh, exponentiate = TRUE) %>%
   bold_p()
 
+#keep yeyar
+m_sdeubeh <- svyglm(depepisode ~ as.factor(any_soft_drug_ever_used_factor) + 
+                      AGE3 + 
+                      IRSEX + 
+                      NEWRACE2 + 
+                      EDUSCHGRD2 + 
+                      YEYARGUP,
+                      design = svy_analytic, 
+                      family = quasibinomial,
+                      na.action = na.omit         #added to exclude edu na's
+                      )
+summary(m_sdeubeh)
+log_odds <- coef(m_sdeubeh)
+log_ci <- confint(m_sdeubeh)
+sdeubeh_log <- cbind(
+    Log_Odds = log_odds,
+    Lower_CI = log_ci[, 1],
+    Upper_CI = log_ci[, 2]
+)
+sdeubeh_OR_CI <- exp(sdeubeh_log)
+kable(sdeubeh_OR_CI)
+
+tbl_regression(m_sdeubeh, exponentiate = TRUE) %>%
+  bold_p()
 ```
 
 # regression, hard drug ever used
@@ -703,8 +786,7 @@ tbl_regression(m_hdeucrude, exponentiate = TRUE) %>%
 #########biological model hdeu
 m_hdeubiological <- svyglm(
     formula = depepisode ~ as.factor(any_hard_drug_ever_used_factor) + 
-              AGE3 + 
-              IRSEX, 
+              AGE3, 
           design = svy_analytic, 
           family = quasibinomial
           )
@@ -722,12 +804,36 @@ kable(hdeubio_OR_CI)
 tbl_regression(m_hdeubiological, exponentiate = TRUE) %>%
   bold_p()
 
+#keep age 
+
 #########social model hdeu
 m_hdeusocial <- svyglm(depepisode ~ as.factor(any_hard_drug_ever_used_factor) + 
                          AGE3 + 
                          NEWRACE2 + 
-                         EDUSCHGRD2 + 
-                         POVERTY3,
+                         EDUSCHGRD2,
+                      design = svy_analytic, 
+                      family = quasibinomial,
+                      na.action = na.omit         #added to exclude edu na's
+                      )
+summary(m_hdeusocial)
+log_odds <- coef(m_hdeusocial)
+log_ci <- confint(m_hdeusocial)
+hdeusoc_log <- cbind(
+    Log_Odds = log_odds,
+    Lower_CI = log_ci[, 1],
+    Upper_CI = log_ci[, 2]
+)
+hdeusoc_OR_CI <- exp(hdeusoc_log)
+kable(hdeusoc_OR_CI)
+
+tbl_regression(m_hdeusocial, exponentiate = TRUE) %>%
+  bold_p()
+
+#keep race/edu
+m_hdeusocial <- svyglm(depepisode ~ as.factor(any_hard_drug_ever_used_factor) + 
+                         AGE3 + 
+                         NEWRACE2 + 
+                         EDUSCHGRD2,
                       design = svy_analytic, 
                       family = quasibinomial,
                       na.action = na.omit         #added to exclude edu na's
@@ -751,17 +857,35 @@ m_hdeubeh <- svyglm(depepisode ~ as.factor(any_hard_drug_ever_used_factor) +
                       AGE3 + 
                       NEWRACE2 + 
                       EDUSCHGRD2 + 
-                      AVGGRADE + 
-                      PARLMTSN + 
-                      EDFAM18 + 
-                      IMOTHER + 
-                      IFATHER + 
                       YEYARGUP + 
                       YEPPROUD +
                       YEYFGTSW + 
                       YEPGDJOB + 
-                      YESCHACT + 
-                      YECOMACT,
+                      YESCHACT,
+                      design = svy_analytic, 
+                      family = quasibinomial, 
+                      na.action = na.omit         #added to exclude edu na's
+                      )
+summary(m_hdeubeh)
+log_odds <- coef(m_hdeubeh)
+log_ci <- confint(m_hdeubeh)
+hdeubeh_log <- cbind(
+    Log_Odds = log_odds,
+    Lower_CI = log_ci[, 1],
+    Upper_CI = log_ci[, 2]
+)
+hdeubeh_OR_CI <- exp(hdeubeh_log)
+kable(hdeubeh_OR_CI)
+
+tbl_regression(m_hdeubeh, exponentiate = TRUE) %>%
+  bold_p()
+
+#keep yeyar
+m_hdeubeh <- svyglm(depepisode ~ as.factor(any_hard_drug_ever_used_factor) + 
+                      AGE3 + 
+                      NEWRACE2 + 
+                      EDUSCHGRD2 + 
+                      YEYARGUP,
                       design = svy_analytic, 
                       family = quasibinomial, 
                       na.action = na.omit         #added to exclude edu na's
@@ -798,6 +922,18 @@ confint(svyprop)
 # Overall 
 weighted_counts <- svytable(~ any_drug_ever_used_factor, svy_analytic)
 svyprop <- svymean(~factor(any_drug_ever_used_factor), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+#SOFT DRUGS
+weighted_counts <- svytable(~ any_soft_drug_ever_used_factor, svy_analytic)
+svyprop <- svymean(~factor(any_soft_drug_ever_used_factor), design = svy_analytic)
+svyprop
+confint(svyprop)
+
+#HARD DRUGS
+weighted_counts <- svytable(~ any_hard_drug_ever_used_factor, svy_analytic)
+svyprop <- svymean(~factor(any_hard_drug_ever_used_factor), design = svy_analytic)
 svyprop
 confint(svyprop)
 
