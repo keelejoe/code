@@ -1349,3 +1349,87 @@ for (var in check_vars) {
   print(table(youth_analytic[[var]], useNA = "ifany"))
 }
 ```
+
+```{auc - model fit}
+#run in console
+
+library(pROC)
+library(survey)
+
+#any drugs crude
+y<-svy_analytic$variables$YMDELT
+pred <- predict(m_adeucrude, type = "response")
+roc_obj <- roc(y, pred, weights = weights(design))
+auc(roc_obj)
+
+#any drugs bio
+y<-svy_analytic$variables$YMDELT
+pred <- predict(m_adeubiological, type = "response")
+roc_obj <- roc(y, pred, weights = weights(design))
+auc(roc_obj)
+
+#any drugs soc
+y<-svy_analytic$variables$YMDELT
+pred <- predict(m_adeusocial, type = "response")
+roc_obj <- roc(y, pred, weights = weights(design))
+auc(roc_obj)
+
+#any drugs beh
+y<-svy_analytic$variables$YMDELT
+pred <- predict(m_adeubeh, type = "response")
+roc_obj <- roc(y, pred, weights = weights(design))
+auc(roc_obj)
+
+#soft drugs crude
+y<-svy_analytic$variables$YMDELT
+pred <- predict(m_sdeucrude, type = "response")
+roc_obj <- roc(y, pred, weights = weights(design))
+auc(roc_obj)
+
+#soft drugs bio
+y<-svy_analytic$variables$YMDELT
+pred <- predict(m_sdeubiological, type = "response")
+roc_obj <- roc(y, pred, weights = weights(design))
+auc(roc_obj)
+
+#soft drugs soc
+y<-svy_analytic$variables$YMDELT
+pred <- predict(m_sdeusocial, type = "response")
+roc_obj <- roc(y, pred, weights = weights(design))
+auc(roc_obj)
+
+#soft drugs beh
+y<-svy_analytic$variables$YMDELT
+pred <- predict(m_sdeubeh, type = "response")
+roc_obj <- roc(y, pred, weights = weights(design))
+auc(roc_obj)
+
+#hard drugs crude
+y<-svy_analytic$variables$YMDELT
+pred <- predict(m_hdeucrude, type = "response")
+roc_obj <- roc(y, pred, weights = weights(design))
+auc(roc_obj)
+
+#hard drugs bio
+y<-svy_analytic$variables$YMDELT
+pred <- predict(m_hdeubiological, type = "response")
+roc_obj <- roc(y, pred, weights = weights(design))
+auc(roc_obj)
+
+#hard drugs soc
+y<-svy_analytic$variables$YMDELT
+pred <- predict(m_hdeusocial, type = "response")
+roc_obj <- roc(y, pred, weights = weights(design))
+auc(roc_obj)
+
+#hard drugs beh
+y<-svy_analytic$variables$YMDELT
+pred <- predict(m_hdeubeh, type = "response")
+roc_obj <- roc(y, pred, weights = weights(design))
+auc(roc_obj)
+
+
+
+```
+
+
